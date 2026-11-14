@@ -838,6 +838,199 @@ const TYPES = {
 };
 
 /* =========================================================
+   ウイスキー診断
+   WHISKIES に銘柄を足すだけで、診断の対象が増える
+   cat: jp/sc/us　body: 味の濃さ(1軽い〜3濃い)　sweet: 甘さ(1控えめ〜3甘い)　smoke: スモーキーさ(0〜3)
+   aroma: 香りのタイプ（先頭ほど強い）　easy: 飲みやすさ(3=初心者向き)
+   styles: 飲み方ごとのおすすめ度(0〜3)　premium: ちょっと特別な一本
+   ========================================================= */
+const CAT = { jp: 'ジャパニーズ', sc: 'スコッチ', us: 'バーボン・アメリカン' };
+const STYLE = { hi: 'ハイボール（ソーダ割り）', mizu: '水割り', rock: 'ロック', straight: 'ストレート' };
+const STYLE_S = { hi: 'ハイボール', mizu: '水割り', rock: 'ロック', straight: 'ストレート' };
+const AROMA = { fruit: 'フルーティ', vanilla: 'バニラ・キャラメル', herb: '若葉・ハーブ', smoke: 'スモーキー', spice: 'スパイス・コク' };
+const BODYL = ['', '軽やか', 'ほどよい', '濃厚'];
+const SWEETL = ['', '甘さ控えめ', 'ほどよい甘さ', '甘め'];
+const WHISKIES = [
+  { n: '來人オリジナル', en: 'Raijin Original', cat: 'jp', body: 2, sweet: 2, smoke: 0, aroma: ['vanilla', 'fruit'], easy: 3, styles: { hi: 3, mizu: 2, rock: 2, straight: 1 }, shape: 'slim', liquid: '#d9a24a', label: '#f3e9d6', cap: '#2a1c12',
+    fun: 'お店の名前を背負った看板ウイスキー。ここで飲まずに、どこで飲むのかという一本です。',
+    talk: 'バニラや洋梨を思わせる、和の華やかな樽の香り。鳥取・大山の伏流水を使った、お店オリジナルの味わいです。おすすめはソーダ割りです。' },
+  { n: '角瓶', en: 'Kakubin', cat: 'jp', body: 2, sweet: 2, smoke: 0, aroma: ['fruit', 'vanilla'], easy: 3, styles: { hi: 3, mizu: 2, rock: 2, straight: 1 }, shape: 'square', liquid: '#c98a2e', label: '#e8dcb8', cap: '#3a2a14',
+    fun: 'あの亀甲模様を見ると、なぜか「とりあえずハイボール」と言いたくなります。',
+    talk: 'ほのかな甘みとコクがあり、クセが少ない定番の一本です。ハイボールにすると、すっきり飲みやすくなります。' },
+  { n: '知多', en: 'Chita', cat: 'jp', body: 1, sweet: 2, smoke: 0, aroma: ['vanilla', 'herb'], easy: 3, styles: { hi: 3, mizu: 3, rock: 2, straight: 1 }, shape: 'slim', liquid: '#e6c36a', label: '#eef0e4', cap: '#8a8f7a',
+    fun: '主張しすぎないのに、気づけば食事のそばにいてくれる名脇役です。',
+    talk: '穀物のやさしい甘みと、軽やかでソフトな味わい。水割りやハイボールで、食事と一緒に楽しむのにも向いています。' },
+  { n: '山崎', en: 'Yamazaki', cat: 'jp', body: 2, sweet: 3, smoke: 1, aroma: ['fruit', 'vanilla', 'spice'], easy: 2, premium: true, styles: { hi: 2, mizu: 2, rock: 3, straight: 3 }, shape: 'slim', liquid: '#b8651f', label: '#efe3c8', cap: '#6b4a22',
+    fun: '注文するとき、思わず背筋が伸びてしまう日本ウイスキーの代表格です。',
+    talk: '熟した果実のような甘みと、やわらかな樽の香りが重なる、奥行きのある味わいです。ストレートやロックでじっくりどうぞ。' },
+  { n: '白州', en: 'Hakushu', cat: 'jp', body: 2, sweet: 1, smoke: 1, aroma: ['herb', 'smoke', 'fruit'], easy: 2, premium: true, styles: { hi: 3, mizu: 2, rock: 2, straight: 2 }, shape: 'slim', liquid: '#e0b45a', label: '#e4efdc', cap: '#2f4a32',
+    fun: '森の中で深呼吸したような、ちょっと贅沢な一杯です。',
+    talk: '森の若葉を思わせる爽やかな香りと、ほのかなスモーキーさがあります。ハイボールにすると、香りが一段と引き立ちます。' },
+  { n: 'ジョニーウォーカー ブラックラベル', en: 'Johnnie Walker Black Label', cat: 'sc', body: 3, sweet: 2, smoke: 2, aroma: ['smoke', 'fruit', 'vanilla'], easy: 2, styles: { hi: 3, mizu: 2, rock: 3, straight: 2 }, shape: 'square', liquid: '#a85a1c', label: '#1c1c1c', cap: '#111',
+    fun: '「ウイスキーといえば」で、真っ先に名前が挙がる大定番です。',
+    talk: '果実やバニラの甘さの奥に、ほどよいスモーキーさがあるブレンデッドスコッチです。コクがあるので、ロックでもハイボールでも楽しめます。' },
+  { n: 'シーバスリーガル12年', en: 'Chivas Regal 12', cat: 'sc', body: 2, sweet: 3, smoke: 0, aroma: ['fruit', 'vanilla'], easy: 3, styles: { hi: 2, mizu: 3, rock: 3, straight: 2 }, shape: 'round', liquid: '#c88a38', label: '#e9dfc4', cap: '#8a6a2a',
+    fun: 'なめらかすぎて、つい次の一杯の話をしたくなる一本です。',
+    talk: 'はちみつやりんごを思わせる、まろやかでなめらかな甘さ。クセが少なく、ロックや水割りで飲みやすい一本です。' },
+  { n: 'シーバスリーガル12年 ミズナラ', en: 'Chivas Regal Mizunara', cat: 'sc', body: 2, sweet: 3, smoke: 0, aroma: ['spice', 'vanilla', 'fruit'], easy: 2, premium: true, styles: { hi: 2, mizu: 2, rock: 3, straight: 2 }, shape: 'round', liquid: '#bf7228', label: '#f0e2c6', cap: '#7a2a1a',
+    fun: '日本の樽の香りをまとったスコッチという、国際色ゆたかな一杯です。',
+    talk: '日本のミズナラ樽の、お香のような独特の香りとスパイス感が加わります。なめらかな甘さとの組み合わせを、ロックで試してみてください。' },
+  { n: 'デュワーズ ホワイト・ラベル', en: "Dewar's White Label", cat: 'sc', body: 1, sweet: 2, smoke: 0, aroma: ['vanilla', 'herb'], easy: 3, styles: { hi: 3, mizu: 3, rock: 2, straight: 1 }, shape: 'round', liquid: '#e2b45a', label: '#f4f1e8', cap: '#2a2a2a',
+    fun: 'クセがないので、ウイスキーデビューの強い味方になります。',
+    talk: 'はちみつやバニラのやさしい甘さと、軽やかな飲み口。ハイボールや水割りで、気軽に楽しめます。' },
+  { n: 'デュワーズ12年', en: "Dewar's 12", cat: 'sc', body: 2, sweet: 2, smoke: 0, aroma: ['vanilla', 'fruit'], easy: 3, styles: { hi: 2, mizu: 3, rock: 3, straight: 2 }, shape: 'round', liquid: '#cf8f3a', label: '#efe6d0', cap: '#6a2a2a',
+    fun: '白ラベルのひとつ上のお兄さん。落ち着きとなめらかさが増しています。',
+    talk: 'ドライフルーツやバニラの甘さがあり、白ラベルよりまろやかで厚みがあります。ロックや水割りがおすすめです。' },
+  { n: 'マッカラン シェリーオーク12年', en: 'The Macallan Sherry Oak 12', cat: 'sc', body: 3, sweet: 3, smoke: 0, aroma: ['fruit', 'spice', 'vanilla'], easy: 1, premium: true, styles: { hi: 1, mizu: 2, rock: 3, straight: 3 }, shape: 'round', liquid: '#8a3a14', label: '#f2e6c8', cap: '#2a1c12',
+    fun: '一口飲むと、シェリー樽の贅沢な甘さに、思わず無言になります。',
+    talk: 'ドライフルーツやスパイス、チョコレートを思わせる濃厚でリッチな味わい。ストレートかロックで、ゆっくり味わってください。' },
+  { n: 'ジャックダニエル', en: "Jack Daniel's", cat: 'us', body: 2, sweet: 2, smoke: 1, aroma: ['vanilla', 'smoke'], easy: 2, styles: { hi: 3, mizu: 1, rock: 3, straight: 2 }, shape: 'square', liquid: '#b0601e', label: '#1a1a1a', cap: '#1a1a1a',
+    fun: '乾杯の場が似合う、陽気でタフな味方です。',
+    talk: 'バーボンの仲間のテネシーウイスキー。バニラやキャラメルの甘さと、ほのかな焦げた樽の香りがあります。ロックやソーダ割りがおすすめです。' },
+  { n: 'ジャックダニエル アップル', en: "Jack Daniel's Tennessee Apple", cat: 'us', body: 1, sweet: 3, smoke: 0, aroma: ['fruit'], easy: 3, flavored: true, styles: { hi: 3, mizu: 0, rock: 2, straight: 1 }, shape: 'square', liquid: '#d6a53a', label: '#2a3a1c', cap: '#1a1a1a',
+    fun: 'りんごの甘さで、ウイスキーのハードルがぐっと下がります。',
+    talk: 'ウイスキーにりんごのリキュールを合わせた、甘くフルーティな一本です。ソーダ割りで、さっぱり楽しめます。' },
+  { n: 'ジャックダニエル ハニー', en: "Jack Daniel's Tennessee Honey", cat: 'us', body: 2, sweet: 3, smoke: 0, aroma: ['vanilla', 'fruit'], easy: 3, flavored: true, styles: { hi: 2, mizu: 0, rock: 3, straight: 2 }, shape: 'square', liquid: '#d99a2a', label: '#3a2a10', cap: '#1a1a1a',
+    fun: 'はちみつのやさしい甘さで、ウイスキーが初めての人にも入りやすい一杯です。',
+    talk: 'ウイスキーにはちみつのリキュールを合わせた、甘くなめらかな味わいです。ロックで、ゆっくり楽しめます。' },
+  { n: 'ジムビーム', en: 'Jim Beam', cat: 'us', body: 1, sweet: 2, smoke: 0, aroma: ['vanilla'], easy: 3, styles: { hi: 3, mizu: 2, rock: 2, straight: 1 }, shape: 'square', liquid: '#cf8a30', label: '#efe6d0', cap: '#3a2a14',
+    fun: '肩ひじ張らずに飲める、気さくなバーボンです。',
+    talk: 'トウモロコシ由来の甘みとバニラの香りがあり、軽くて飲みやすい一本です。ハイボールで、気軽にどうぞ。' },
+  { n: 'ワイルドターキー', en: 'Wild Turkey', cat: 'us', body: 3, sweet: 2, smoke: 0, aroma: ['spice', 'vanilla'], easy: 1, styles: { hi: 2, mizu: 1, rock: 3, straight: 3 }, shape: 'round', liquid: '#b5601c', label: '#e9d9b8', cap: '#6a2a1a',
+    fun: '名前のとおり野性味たっぷり。ガツンと飲みたい夜の相棒です。',
+    talk: 'バニラやキャラメルの甘さに、スパイスの力強さが加わる、パンチのあるバーボンです。ロックやストレートで、味わいを楽しんでください。' }
+];
+
+const WH_STEPS = [
+  { id: 'level', label: 'ウイスキーの経験', scene: 'まずは、ウイスキーとの付き合いを教えてください。', ask: 'ウイスキーは、普段どのくらい飲みますか？',
+    choices: [
+      { t: 'ほとんど飲んだことがない', s: '飲みやすいものから試したい', v: 'beginner' },
+      { t: 'たまに飲む', s: 'いくつかの銘柄は知っている', v: 'casual' },
+      { t: 'よく飲む・好き', s: 'いろいろな味を試してみたい', v: 'fan' }
+    ], tips: [] },
+  { id: 'style', label: '飲み方', scene: '好きな飲み方があれば教えてください。', ask: 'どんな飲み方で楽しみたいですか？',
+    choices: [
+      { t: 'ハイボール（ソーダ割り）', s: 'さっぱり、グイグイ飲みたい', v: 'hi' },
+      { t: '水割り', s: 'やさしく、食事と一緒に', v: 'mizu' },
+      { t: 'ロック', s: '氷でゆっくり、変化を楽しむ', v: 'rock' },
+      { t: 'ストレート', s: '香りと味を、じっくり味わう', v: 'straight' },
+      { t: 'おまかせ', s: '銘柄に合う飲み方を知りたい', v: 'any' }
+    ],
+    tips: [{ q: '飲み方の違いは？', a: 'ハイボール：ソーダで割る。すっきりして飲みやすい。\n水割り：水で割る。香りがやわらぎ、食事に合わせやすい。\nロック：氷を入れる。冷たさと、ゆっくり変わる味を楽しむ。\nストレート：そのまま飲む。銘柄の個性がいちばん伝わる。' }] },
+  { id: 'body', label: '味の濃さ', scene: '飲んだときの、味の印象です。', ask: '味の濃さは、どれが好みですか？',
+    choices: [
+      { t: '軽やか・すっきり', s: 'クセが少なく、さらっと', v: 1 },
+      { t: 'ほどよい', s: 'バランスのよいものを', v: 2 },
+      { t: '濃厚・しっかり', s: 'コクと厚みのあるものを', v: 3 }
+    ], tips: [] },
+  { id: 'sweet', label: '甘さ', scene: 'ウイスキーの甘さにも、いろいろあります。', ask: '甘さは、どのくらいが好みですか？',
+    choices: [
+      { t: '甘め・まろやか', s: 'バニラやはちみつのような甘さ', v: 3 },
+      { t: 'ほどほど', s: '甘すぎず、辛すぎず', v: 2 },
+      { t: '甘さ控えめ・キリッと', s: 'ドライですっきり', v: 1 }
+    ], tips: [] },
+  { id: 'aroma', label: '香り', scene: '香りは、ウイスキー選びの大切なポイントです。', ask: 'どんな香りに惹かれますか？',
+    choices: [
+      { t: '果物のようなフルーティな香り', s: 'りんご、洋梨、ドライフルーツなど', v: 'fruit' },
+      { t: 'バニラやキャラメルの甘い香り', s: 'お菓子のような、やさしい香り', v: 'vanilla' },
+      { t: '若葉やハーブの爽やかな香り', s: '森を歩いているような清涼感', v: 'herb' },
+      { t: '燻製のようなスモーキーな香り', s: 'たき火や焦げた木のような香り', v: 'smoke' },
+      { t: 'スパイスや熟成のコクのある香り', s: 'シェリー樽やお香のような深み', v: 'spice' }
+    ],
+    tips: [{ q: 'スモーキーとは？', a: 'たき火や燻製のような、煙の香りのこと。好みが分かれますが、ハマると抜け出せなくなる人もいます。' }] },
+  { id: 'avoid', label: '苦手なもの', scene: '苦手なものを避けるのも、大切です。', ask: 'これは苦手、というものはありますか？',
+    choices: [
+      { t: 'スモーキーな香りは苦手', v: 'smoke' },
+      { t: 'アルコールの強い刺激は苦手', v: 'alcohol' },
+      { t: '甘すぎるものは苦手', v: 'sweetness' },
+      { t: '特にない', v: 'none' }
+    ], tips: [] },
+  { id: 'country', label: '産地', scene: '産地には、それぞれ個性があります。', ask: '気になる産地はありますか？',
+    choices: [
+      { t: 'ジャパニーズ', s: '繊細で、なめらか', v: 'jp' },
+      { t: 'スコッチ', s: '伝統的で、奥深い', v: 'sc' },
+      { t: 'バーボン・アメリカン', s: '甘く、力強い', v: 'us' },
+      { t: 'こだわらない', v: 'any' }
+    ], tips: [] },
+  { id: 'special', label: '今夜の一杯', scene: '最後の質問です。', ask: '今夜は、どんな一杯にしたいですか？',
+    choices: [
+      { t: 'ちょっと特別な一杯を', s: 'じっくり味わいたい', v: 'special' },
+      { t: '気軽にいつもの一杯を', s: 'みんなで楽しく飲みたい', v: 'regular' },
+      { t: 'どちらでもよい', v: 'any' }
+    ], tips: [] }
+];
+
+function whiskyScore(w, a) {
+  let s = 0; const hits = [];
+  // 経験
+  if (a.level === 'beginner') s += (w.easy - 2) * 2; else if (a.level === 'fan') s += (3 - w.easy) * 0.5;
+  // 飲み方
+  if (a.style !== 'any') { s += w.styles[a.style] * 1.5; if (w.styles[a.style] >= 2) hits.push(STYLE_S[a.style] + 'に合う'); }
+  // 濃さ・甘さ
+  s += 3 - Math.abs(w.body - a.body) * 1.5; if (w.body === a.body) hits.push(BODYL[a.body]);
+  s += 3 - Math.abs(w.sweet - a.sweet) * 1.5; if (w.sweet === a.sweet) hits.push(SWEETL[a.sweet]);
+  // 香り
+  const ai = w.aroma.indexOf(a.aroma); if (ai >= 0) { s += ai === 0 ? 3 : 2; hits.push(AROMA[a.aroma]); } else if (a.aroma === 'smoke') s -= 2;
+  // 苦手
+  if (a.avoid === 'smoke') s -= w.smoke * 3;
+  if (a.avoid === 'alcohol') s -= (3 - w.easy) * 1.5;
+  if (a.avoid === 'sweetness') s -= (w.sweet - 1) * 1.5 + (w.flavored ? 2 : 0);
+  // 産地
+  if (a.country !== 'any') { if (w.cat === a.country) { s += 3; hits.push(CAT[w.cat]); } else s -= 1; }
+  // 特別感
+  if (a.special === 'special') s += w.premium ? 2.5 : 0; else if (a.special === 'regular') s -= w.premium ? 1.5 : 0;
+  return { w, s, pct: Math.max(40, Math.min(99, Math.round(40 + s / 20 * 59))), hits };
+}
+function whiskyStyles(w, a) {
+  const order = Object.keys(w.styles).sort((x, y) => w.styles[y] - w.styles[x]);
+  const main = a.style !== 'any' && w.styles[a.style] >= 2 ? a.style : order[0];
+  return { main, others: order.filter(k => k !== main && w.styles[k] >= 2).slice(0, 2) };
+}
+function bottleSvg(w) {
+  const P = { round: 'M43 16 V38 Q43 47 28 57 V114 Q28 120 34 120 H66 Q72 120 72 114 V57 Q57 47 57 38 V16 Z',
+    square: 'M44 14 V34 L30 46 V114 Q30 120 36 120 H64 Q70 120 70 114 V46 L56 34 V14 Z',
+    slim: 'M45 14 V50 Q45 57 38 63 V114 Q38 120 44 120 H56 Q62 120 62 114 V63 Q55 57 55 50 V14 Z' }[w.shape];
+  const id = ++_gid, dark = w.label === '#1c1c1c' || w.label === '#111' || w.label === '#1a1a1a' || w.label === '#2a3a1c' || w.label === '#3a2a10';
+  return `<svg viewBox="0 0 100 130" role="img" aria-label="${esc(w.n)}のボトルのイメージ"><defs><clipPath id="bc${id}"><path d="${P}"/></clipPath><linearGradient id="bl${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${w.liquid}"/><stop offset=".55" stop-color="${w.liquid}"/><stop offset="1" stop-color="${mix(w.liquid, '#000000', .25)}"/></linearGradient></defs>
+    <g clip-path="url(#bc${id})"><rect x="0" y="40" width="100" height="90" fill="url(#bl${id})"/><rect x="0" y="14" width="100" height="26" fill="#fff" fill-opacity=".08"/>
+    <rect x="20" y="74" width="60" height="32" fill="${w.label}"/><rect x="20" y="74" width="60" height="2.4" fill="#d6aa5e"/><rect x="20" y="103.6" width="60" height="2.4" fill="#d6aa5e"/>
+    <rect x="36" y="83" width="28" height="3" rx="1.5" fill="${dark ? '#d6aa5e' : '#3a2a14'}" fill-opacity=".85"/><rect x="40" y="90" width="20" height="2" rx="1" fill="${dark ? '#fff' : '#3a2a14'}" fill-opacity=".5"/><rect x="43" y="95" width="14" height="2" rx="1" fill="${dark ? '#fff' : '#3a2a14'}" fill-opacity=".35"/></g>
+    <path d="${P}" fill="none" stroke="var(--glass)" stroke-width="2.4" stroke-linejoin="round"/><rect x="42.5" y="6" width="15" height="9" rx="2" fill="${w.cap}"/><path d="M34 62 V112" stroke="#fff" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>`;
+}
+function renderWhiskyResult() {
+  const a = answers, res = WHISKIES.map(w => whiskyScore(w, a)).sort((x, y) => y.s - x.s).slice(0, 3);
+  const chipsW = [{ beginner: 'ウイスキー初心者', casual: 'たまに飲む', fan: 'ウイスキー好き' }[a.level], a.style === 'any' ? '飲み方おまかせ' : STYLE_S[a.style], BODYL[a.body], SWEETL[a.sweet], AROMA[a.aroma] + 'な香り', a.country === 'any' ? '産地こだわらない' : CAT[a.country]].map(t => `<span class="chip">${esc(t)}</span>`).join('');
+  card.innerHTML = `
+    <span class="stage">診断結果</span>
+    <h2 class="ask">あなたにおすすめのウイスキー3本です</h2>
+    <div class="chips" aria-label="選んだ条件">${chipsW}</div>
+    ${res.map((r, i) => { const w = r.w, st = whiskyStyles(w, a); return `<section class="pick">
+        <div class="art">${bottleSvg(w)}</div>
+        <div class="pick-body">
+          <div class="pick-head"><span class="rank">${['いちばんのおすすめ', '2番目の候補', '3番目の候補'][i]}</span><span class="match">相性 ${r.pct}%</span></div>
+          <h3 class="pname">${esc(w.n)}<span>${esc(w.en)}</span></h3>
+          <p class="fun">${esc(w.fun)}</p>
+          <div class="chips">${[CAT[w.cat], ...r.hits.filter(h => h !== CAT[w.cat])].map(h => `<span class="chip hit">${esc(h)}</span>`).join('')}</div>
+          <p class="meta">おすすめの飲み方：<b>${esc(STYLE[st.main])}</b>${st.others.length ? '　／　ほかに ' + st.others.map(k => STYLE_S[k]).join('・') : ''}</p>
+          <p class="talk">${esc(w.talk)}</p>
+        </div>
+      </section>`; }).join('')}
+    <p class="notice pay"><b>お支払い方法</b><span>現金のみ</span></p>
+    <p class="order">注文するときは、この画面をバーテンダーに見せてください。</p>
+    <p class="small">価格はドリンクメニューをご覧ください。相性は、条件とどれだけ合うかの目安です。味の感じ方には個人差があります。</p>
+    <div class="row">
+      <button class="btn" type="button" id="again">最初からやり直す</button>
+      <button class="btn ghost" type="button" id="list">取り扱いウイスキーを見る</button>
+      <button class="btn ghost" type="button" id="other">カクテルを選ぶ</button>
+      <button class="btn ghost" type="button" id="back">ひとつ前に戻る</button>
+    </div>`;
+  $('#again').onclick = () => { mode = null; answers = {}; idx = 0; render(); toTop(); };
+  $('#list').onclick = () => showTip({ q: '取り扱いウイスキー', a: Object.keys(CAT).map(k => '【' + CAT[k] + '】\n' + WHISKIES.filter(w => w.cat === k).map(w => w.n).join('\n')).join('\n\n') });
+  $('#other').onclick = () => startMode('pref');
+  $('#back').onclick = () => { idx--; render(); };
+}
+
+/* =========================================================
    動作
    ========================================================= */
 const $ = s => document.querySelector(s);
@@ -846,9 +1039,10 @@ let mode = null, answers = {}, idx = 0;
 function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
 function visible() {
   if (mode === 'persona') return [...personaSet, PERSONA_STRENGTH];
+  if (mode === 'whisky') return WH_STEPS;
   return STEPS.filter(s => !(s.id === 'base' && answers.strength === 0));
 }
-const MODE_NAME = { pref: '好みから選ぶ', persona: '性格から選ぶ' };
+const MODE_NAME = { pref: '好みから選ぶ', persona: '性格から選ぶ', whisky: 'ウイスキー診断' };
 
 function renderProgress() {
   const prog = $('.progress');
@@ -864,12 +1058,13 @@ function renderProgress() {
 function renderStart() {
   card.innerHTML = `
     <span class="stage">はじめに</span>
-    <h2 class="ask">どちらの方法で、今夜の一杯を選びますか？</h2>
+    <h2 class="ask">どの方法で、今夜の一杯を選びますか？</h2>
     <div class="choices">
       <button class="choice mode" type="button" id="mode-pref" data-m="pref"><span class="num" aria-hidden="true">A</span><span>好みから選ぶ<small>味、強さ、ベースのお酒、炭酸などを具体的に選びます。飲みたいものがある程度決まっている方に。</small></span></button>
       <button class="choice mode" type="button" id="mode-persona" data-m="persona"><span class="num" aria-hidden="true">B</span><span>性格から選ぶ<small>休日の過ごし方や好きな季節など、お酒と関係ない質問からタイプを診断します。質問は毎回ランダムに入れ替わるので、みんなで何度でも遊べます。</small></span></button>
+      <button class="choice mode" type="button" id="mode-whisky" data-m="whisky"><span class="num" aria-hidden="true">C</span><span>ウイスキーから選ぶ<small>ウイスキーが飲みたい方に。味の濃さ、甘さ、香り、飲み方などから、当店のウイスキーをご案内します。</small></span></button>
     </div>
-    <p class="small">どちらも質問は5〜6問、1分ほどで終わります。</p>`;
+    <p class="small">質問は5〜8問、1分ほどで終わります。</p>`;
   card.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { startMode(b.dataset.m); }));
 }
 function startMode(m) { mode = m; answers = {}; idx = 0; if (m === 'persona') personaSet = pickPersonaSet(); render(); toTop(); }
@@ -954,6 +1149,7 @@ function specialHtml(a) {
 }
 
 function renderResult() {
+  if (mode === 'whisky') return renderWhiskyResult();
   const persona = mode === 'persona';
   const a = persona ? personaToPrefs() : answers;
   const res = recommend(a);
