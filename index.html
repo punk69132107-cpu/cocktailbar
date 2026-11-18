@@ -118,6 +118,14 @@ button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .nomi-h { font-family: var(--font-display); font-weight: 700; font-size: 16px; margin-bottom: 4px !important; }
 .nomi-p { font-size: 15px; margin-bottom: 2px !important; }
 .nomi-p b { font-size: 19px; }
+.menu-grp { margin: 14px 0; }
+.menu-h { font-family: var(--font-display); font-size: 16px; margin: 0 0 4px; padding-bottom: 4px; border-bottom: 2px solid var(--brass-soft); }
+.menu-row { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 7px 2px; border-bottom: 1px dashed var(--brass-soft); font-size: 15px; }
+.menu-lim { white-space: nowrap; display: inline-block; font-style: normal; font-size: 11px; margin-left: 6px; padding: 1px 6px; border-radius: 999px; background: var(--brass-soft); }
+.menu-p { font-weight: 700; white-space: nowrap; }
+.menu-p small { font-weight: 400; margin-left: 6px; opacity: .8; }
+.pick.house { border-color: var(--brass, #b8893f); box-shadow: 0 0 0 2px var(--brass-soft); }
+.notice.raijin { text-align: center; line-height: 1.7; }
 .pick.special { border: 1.5px dashed var(--brass, #b8893f); }
 .recipe { margin: 0; padding: 0; list-style: none; display: grid; gap: 2px; font-size: 14.5px; }
 .recipe li { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px dotted var(--line); padding-block: 2px; }
@@ -237,9 +245,9 @@ const STEPS = [
   { id: 'base', label: 'ベースのお酒', scene: 'カクテルの土台になるお酒を選びます。', ask: '好きなお酒（ベース）はありますか？', two: true,
     choices: [
       { t: 'おまかせ', v: 'any' }, { t: 'リキュール', v: 'liqueur' }, { t: 'ジン', v: 'gin' }, { t: 'ウォッカ', v: 'vodka' },
-      { t: 'ラム', v: 'rum' }, { t: 'テキーラ', v: 'tequila' }, { t: 'ウイスキー', v: 'whisky' }, { t: 'ブランデー', v: 'brandy' }
+      { t: 'ラム', v: 'rum' }, { t: 'テキーラ', v: 'tequila' }, { t: 'ウイスキー', v: 'whisky' }, { t: 'ビール', v: 'beer' }, { t: 'ワイン', v: 'wine' }, { t: '焼酎', v: 'shochu' }, { t: '酎ハイ', v: 'chuhai' }
     ],
-    tips: [{ q: 'ベースごとの特徴', a: 'リキュール：果実やハーブを使った甘めのお酒。ミルクやオレンジジュースで割ると、飲みやすい。\nジン：ハーブの香りで、キリッとした味。\nウォッカ：くせが少なく、割るものの味が生きる。\nラム：サトウキビが原料で、ほのかに甘い。\nテキーラ：リュウゼツランが原料で、独特の青い香り。\nウイスキー：樽の香りとコク。\nブランデー：熟した果実のような香り。' }] },
+    tips: [{ q: 'ベースごとの特徴', a: 'リキュール：果実やハーブを使った甘めのお酒。ミルクやオレンジジュースで割ると、飲みやすい。\nジン：ハーブの香りで、キリッとした味。\nウォッカ：くせが少なく、割るものの味が生きる。\nラム：サトウキビが原料で、ほのかに甘い。\nテキーラ：リュウゼツランが原料で、独特の青い香り。\nウイスキー：樽の香りとコク。' }] },
   { id: 'flavor', label: '風味', scene: '香りや味の特徴を選びます。', ask: 'どんな風味が好きですか？',
     choices: [
       { t: '柑橘（レモン・ライム・グレープフルーツ）', v: 'citrus' },
@@ -275,50 +283,20 @@ const STEPS = [
    glass: highball／rocks／cocktail／coupe／mug
    ========================================================= */
 const COCKTAILS = [
-  { n: 'ジン・トニック', en: 'Gin & Tonic', base: 'gin', str: 1, taste: ['fresh', 'bitter'], flavor: ['citrus', 'bitter', 'herb'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#e9eedc',
-    r: [['ドライ・ジン', '45ml'], ['トニックウォーター', '適量'], ['ライム', '1/6個']], how: 'ビルド', talk: 'ジンの香りとトニックのほろ苦さで、1杯目にぴったりです。' },
-  { n: 'モスコミュール', en: 'Moscow Mule', base: 'vodka', str: 1, taste: ['fresh'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'mug', color: '#e8d9a8',
-    r: [['ウォッカ', '45ml'], ['ライムジュース', '15ml'], ['ジンジャーエール', '適量']], how: 'ビルド', talk: 'ジンジャーエールの甘い香りが広がる、すっきりした一杯です。' },
-  { n: 'モヒート', en: 'Mojito', base: 'rum', str: 1, taste: ['fresh', 'sweet'], flavor: ['herb', 'citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#d6ecc4',
-    r: [['ホワイト・ラム', '45ml'], ['ライム', '1/2個'], ['ミントの葉', '10枚'], ['砂糖', '2tsp'], ['ソーダ', '適量']], how: 'ビルド（ミントをつぶす）', talk: 'ミントとライムがたっぷりで、夏に人気のさわやかな一杯です。' },
   { n: 'ソルティ・ドッグ', en: 'Salty Dog', base: 'vodka', str: 1, taste: ['fresh', 'bitter'], flavor: ['citrus'], fizz: false, scene: ['first', 'meal'], glass: 'rocks', color: '#f2d8c8',
     r: [['ウォッカ', '45ml'], ['グレープフルーツジュース', '適量'], ['塩（グラスの縁に）', '少々']], how: 'ビルド（スノースタイル）', talk: 'グラスの縁の塩が、グレープフルーツの甘みを引き立てます。' },
-  { n: 'スクリュードライバー', en: 'Screwdriver', base: 'vodka', str: 1, taste: ['sweet', 'fresh'], flavor: ['fruit', 'citrus'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#f6b54a',
-    r: [['ウォッカ', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'オレンジジュースの味わいで、お酒が苦手な方にも飲みやすい一杯です。' },
-  { n: 'カシスオレンジ', en: 'Cassis Orange', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#c9573f',
-    r: [['クレーム・ド・カシス', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: '甘酸っぱいカシスとオレンジで、フルーツジュース感覚で楽しめます。' },
-  { n: 'ファジーネーブル', en: 'Fuzzy Navel', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: false, scene: ['first', 'meal', 'after'], glass: 'highball', color: '#f4a45a',
-    r: [['クレーム・ド・ペシェ（ピーチ）', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: '桃の甘い香りが広がる、やさしい味わいです。' },
-  { n: 'カルーア・ミルク', en: 'Kahlúa & Milk', base: 'liqueur', str: 1, taste: ['sweet', 'rich'], flavor: ['cream'], fizz: false, scene: ['after', 'last'], glass: 'rocks', color: '#c8a27c',
-    r: [['カルーア（コーヒーリキュール）', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: 'コーヒー牛乳のような味わいで、食後のデザート代わりにどうぞ。' },
-  { n: 'テキーラ・サンライズ', en: 'Tequila Sunrise', base: 'tequila', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#f08a3a',
-    r: [['テキーラ', '45ml'], ['オレンジジュース', '90ml'], ['グレナデン・シロップ', '2tsp']], how: 'ビルド（シロップを沈める）', talk: '朝焼けのようなグラデーションが見どころです。' },
   { n: 'パロマ', en: 'Paloma', base: 'tequila', str: 1, taste: ['fresh', 'bitter'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#f3cfc4',
     r: [['テキーラ', '45ml'], ['ライムジュース', '10ml'], ['グレープフルーツソーダ', '適量'], ['塩（グラスの縁に）', '少々']], how: 'ビルド', talk: 'メキシコで定番の、グレープフルーツ味のさっぱりした一杯です。' },
-  { n: 'カンパリ・ソーダ', en: 'Campari & Soda', base: 'liqueur', str: 1, taste: ['bitter', 'fresh'], flavor: ['bitter'], fizz: true, scene: ['first'], glass: 'highball', color: '#d8323c',
-    r: [['カンパリ', '45ml'], ['ソーダ', '適量'], ['オレンジスライス', '1枚']], how: 'ビルド', talk: 'ほろ苦さで食欲がわく、イタリアの定番の食前酒です。' },
-  { n: 'スプモーニ', en: 'Spumoni', base: 'liqueur', str: 1, taste: ['bitter', 'fresh'], flavor: ['bitter', 'citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#ef7a6a',
-    r: [['カンパリ', '30ml'], ['グレープフルーツジュース', '45ml'], ['トニックウォーター', '適量']], how: 'ビルド', talk: 'カンパリの苦味を、グレープフルーツがやわらげてくれます。' },
   { n: 'ハイボール', en: 'Highball', base: 'whisky', str: 1, taste: ['fresh', 'rich'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#e5c27a',
     r: [['ウイスキー', '30〜45ml'], ['ソーダ', '適量'], ['レモンピール', 'お好みで']], how: 'ビルド', talk: 'ウイスキーの香りを、食事と一緒に軽く楽しめます。' },
   { n: 'ダイキリ', en: 'Daiquiri', base: 'rum', str: 2, taste: ['fresh'], flavor: ['citrus'], fizz: false, scene: ['first', 'meal'], glass: 'cocktail', color: '#eef0d0',
     r: [['ホワイト・ラム', '45ml'], ['ライムジュース', '15ml'], ['シュガー・シロップ', '10ml']], how: 'シェーク', talk: 'ラムとライムだけのシンプルな味で、甘さと酸味のバランスが決め手です。' },
-  { n: 'マルガリータ', en: 'Margarita', base: 'tequila', str: 2, taste: ['fresh'], flavor: ['citrus'], fizz: false, scene: ['first', 'meal'], glass: 'cocktail', color: '#eaf0c8',
-    r: [['テキーラ', '30ml'], ['ホワイト・キュラソー', '15ml'], ['ライムジュース', '15ml'], ['塩（グラスの縁に）', '少々']], how: 'シェーク（スノースタイル）', talk: '縁の塩と一緒に飲むと、ライムの酸味がぐっと引き立ちます。' },
-  { n: 'ホワイト・レディ', en: 'White Lady', base: 'gin', str: 2, taste: ['fresh'], flavor: ['citrus'], fizz: false, scene: ['first', 'meal'], glass: 'cocktail', color: '#f3f1e2',
-    r: [['ドライ・ジン', '30ml'], ['ホワイト・キュラソー', '15ml'], ['レモンジュース', '15ml']], how: 'シェーク', talk: '白く透きとおった見た目どおりの、上品で切れのある味です。' },
-  { n: 'ギムレット', en: 'Gimlet', base: 'gin', str: 2, taste: ['fresh'], flavor: ['citrus', 'herb'], fizz: false, scene: ['first', 'last'], glass: 'cocktail', color: '#e2ecc8',
-    r: [['ドライ・ジン', '45ml'], ['ライムジュース', '15ml'], ['シュガー・シロップ', '1tsp']], how: 'シェーク', talk: 'ジンとライムだけの、キリッと引き締まった一杯です。' },
   { n: 'コスモポリタン', en: 'Cosmopolitan', base: 'vodka', str: 2, taste: ['sweet', 'fresh'], flavor: ['fruit', 'citrus'], fizz: false, scene: ['first', 'meal'], glass: 'cocktail', color: '#e86a86',
     r: [['ウォッカ', '30ml'], ['ホワイト・キュラソー', '10ml'], ['クランベリージュース', '30ml'], ['ライムジュース', '10ml']], how: 'シェーク', talk: 'クランベリーの甘酸っぱさと、華やかなピンク色が人気です。' },
-  { n: 'サイドカー', en: 'Sidecar', base: 'brandy', str: 2, taste: ['sweet', 'fresh', 'rich'], flavor: ['citrus', 'fruit'], fizz: false, scene: ['after', 'last'], glass: 'cocktail', color: '#e9b65a',
-    r: [['ブランデー', '30ml'], ['ホワイト・キュラソー', '15ml'], ['レモンジュース', '15ml']], how: 'シェーク', talk: 'ブランデーの深い香りに、レモンの酸味を合わせた定番です。' },
   { n: 'ウイスキー・サワー', en: 'Whisky Sour', base: 'whisky', str: 2, taste: ['sweet', 'fresh', 'rich'], flavor: ['citrus'], fizz: false, scene: ['meal', 'after'], glass: 'rocks', color: '#e8c06a',
     r: [['バーボン・ウイスキー', '45ml'], ['レモンジュース', '20ml'], ['シュガー・シロップ', '15ml']], how: 'シェーク', talk: 'ウイスキーが苦手な方でも、甘酸っぱくて飲みやすい一杯です。' },
   { n: 'エスプレッソ・マティーニ', en: 'Espresso Martini', base: 'vodka', str: 2, taste: ['rich', 'sweet', 'bitter'], flavor: ['cream', 'bitter'], fizz: false, scene: ['after', 'last'], glass: 'coupe', color: '#4a2e22',
     r: [['ウォッカ', '40ml'], ['カルーア（コーヒーリキュール）', '20ml'], ['エスプレッソ', '30ml']], how: 'シェーク', talk: 'きめ細かい泡と、コーヒーの香ばしさを楽しむ食後の一杯です。' },
-  { n: 'アレキサンダー', en: 'Alexander', base: 'brandy', str: 2, taste: ['sweet', 'rich'], flavor: ['cream'], fizz: false, scene: ['after', 'last'], glass: 'cocktail', color: '#d9c0a0',
-    r: [['ブランデー', '30ml'], ['クレーム・ド・カカオ', '15ml'], ['生クリーム', '15ml']], how: 'シェーク', talk: 'チョコレートとクリームの、デザートのような一杯です。' },
   { n: 'ネグローニ', en: 'Negroni', base: 'gin', str: 3, taste: ['bitter', 'rich'], flavor: ['bitter', 'herb'], fizz: false, scene: ['first', 'last'], glass: 'rocks', color: '#b3262e',
     r: [['ドライ・ジン', '30ml'], ['カンパリ', '30ml'], ['スイート・ベルモット', '30ml']], how: 'ステア', talk: '3つのお酒を同じ量で合わせた、苦味と甘みの大人の一杯です。' },
   { n: 'マティーニ', en: 'Martini', base: 'gin', str: 3, taste: ['fresh', 'rich'], flavor: ['herb'], fizz: false, scene: ['first', 'last'], glass: 'cocktail', color: '#eef0e6',
@@ -327,28 +305,12 @@ const COCKTAILS = [
     r: [['ライ・ウイスキー', '45ml'], ['スイート・ベルモット', '15ml'], ['アンゴスチュラ・ビターズ', '1dash'], ['チェリー', '1個']], how: 'ステア', talk: '「カクテルの女王」と呼ばれる、深みのある甘さの一杯です。' },
   { n: 'オールド・ファッションド', en: 'Old Fashioned', base: 'whisky', str: 3, taste: ['rich', 'bitter'], flavor: ['bitter', 'citrus'], fizz: false, scene: ['after', 'last'], glass: 'rocks', color: '#b8742c',
     r: [['バーボン・ウイスキー', '45ml'], ['角砂糖', '1個'], ['アンゴスチュラ・ビターズ', '2dash'], ['オレンジピール', '1片']], how: 'ビルド', talk: '砂糖を溶かしながら、味の変化を楽しめる一杯です。' },
-  { n: 'ゴッドファーザー', en: 'Godfather', base: 'whisky', str: 3, taste: ['rich', 'sweet'], flavor: ['cream'], fizz: false, scene: ['after', 'last'], glass: 'rocks', color: '#a8652a',
-    r: [['ウイスキー', '45ml'], ['アマレット', '15ml']], how: 'ビルド', talk: 'アーモンドの甘い香りが、ウイスキーをやさしく包みます。' },
   /* ノンアルコール */
-  { n: 'バージン・モヒート', en: 'Virgin Mojito', base: 'none', str: 0, taste: ['fresh', 'sweet'], flavor: ['herb', 'citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#d6ecc4',
-    r: [['ライム', '1/2個'], ['ミントの葉', '10枚'], ['砂糖', '2tsp'], ['ソーダ', '適量']], how: 'ビルド（ミントをつぶす）', talk: 'お酒抜きでも、ミントとライムでしっかりさわやかです。' },
-  { n: 'シンデレラ', en: 'Cinderella', base: 'none', str: 0, taste: ['sweet', 'fresh'], flavor: ['fruit', 'citrus'], fizz: false, scene: ['first', 'meal', 'after'], glass: 'cocktail', color: '#f4c060',
-    r: [['オレンジジュース', '30ml'], ['パイナップルジュース', '30ml'], ['レモンジュース', '30ml']], how: 'シェーク', talk: '3種類の果汁をシェークした、カクテルグラスで楽しむ一杯です。' },
-  { n: 'シャーリー・テンプル', en: 'Shirley Temple', base: 'none', str: 0, taste: ['sweet'], flavor: ['fruit'], fizz: true, scene: ['first', 'meal', 'after'], glass: 'highball', color: '#ef8f88',
-    r: [['ジンジャーエール', '適量'], ['グレナデン・シロップ', '15ml'], ['レモンピール', '1片']], how: 'ビルド', talk: 'ジンジャーエールにざくろのシロップを合わせた、甘い一杯です。' },
-  { n: 'サラトガ・クーラー', en: 'Saratoga Cooler', base: 'none', str: 0, taste: ['fresh'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#ece2b8',
-    r: [['ライムジュース', '20ml'], ['シュガー・シロップ', '1tsp'], ['ジンジャーエール', '適量']], how: 'ビルド', talk: 'モスコミュールのお酒抜き版のような、すっきりした味です。' },
   /* ロングカクテル（追加） */
-  { n: 'ジン・バック', en: 'Gin Buck', base: 'gin', str: 1, taste: ['fresh'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#f0e3a8',
-    r: [['ドライ・ジン', '45ml'], ['レモンジュース', '15ml'], ['ジンジャーエール', '適量']], how: 'ビルド', talk: '甘いジンジャーエールと、レモンの酸味がよく合う一杯です。' },
   { n: 'ジン・フィズ', en: 'Gin Fizz', base: 'gin', str: 1, taste: ['fresh', 'sweet'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#f3f1d2',
     r: [['ドライ・ジン', '45ml'], ['レモンジュース', '20ml'], ['シュガー・シロップ', '10ml'], ['ソーダ', '適量']], how: 'シェーク＋ソーダ', talk: 'シュワシュワと弾ける、レモン風味の爽快な一杯です。' },
   { n: 'トム・コリンズ', en: 'Tom Collins', base: 'gin', str: 1, taste: ['fresh', 'sweet'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#eee9b8',
     r: [['ドライ・ジン', '45ml'], ['レモンジュース', '20ml'], ['シュガー・シロップ', '10ml'], ['ソーダ', '適量']], how: 'ビルド', talk: '氷をたっぷり入れて、ゆっくり楽しむ定番のロングカクテルです。' },
-  { n: 'ジン・リッキー', en: 'Gin Rickey', base: 'gin', str: 1, taste: ['fresh'], flavor: ['citrus', 'herb'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#e4f0cc',
-    r: [['ドライ・ジン', '45ml'], ['ライム', '1/2個'], ['ソーダ', '適量']], how: 'ビルド', talk: 'ライムをぎゅっと搾った、甘さ控えめでキレのある一杯です。' },
-  { n: 'ウォッカ・トニック', en: 'Vodka Tonic', base: 'vodka', str: 1, taste: ['fresh', 'bitter'], flavor: ['bitter', 'citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#eaf2e0',
-    r: [['ウォッカ', '45ml'], ['トニックウォーター', '適量'], ['ライム', '1/6個']], how: 'ビルド', talk: 'くせのないウォッカに、トニックのほろ苦さがよく映えます。' },
   { n: 'シー・ブリーズ', en: 'Sea Breeze', base: 'vodka', str: 1, taste: ['sweet', 'fresh'], flavor: ['fruit', 'citrus'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#e8667a',
     r: [['ウォッカ', '45ml'], ['クランベリージュース', '90ml'], ['グレープフルーツジュース', '30ml']], how: 'ビルド', talk: '甘酸っぱい2種類のジュースが、海風のようにさわやかです。' },
   { n: 'キューバ・リブレ', en: 'Cuba Libre', base: 'rum', str: 1, taste: ['sweet', 'fresh'], flavor: ['citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#6b3a22',
@@ -359,12 +321,6 @@ const COCKTAILS = [
     r: [['ウイスキー', '30ml'], ['ジンジャーエール', '適量'], ['レモンピール', 'お好みで']], how: 'ビルド', talk: 'ハイボールよりやさしい甘さで、ウイスキー初心者にもおすすめです。' },
   { n: 'ブラッディ・メアリー', en: 'Bloody Mary', base: 'vodka', str: 1, taste: ['bitter', 'rich'], flavor: ['herb', 'bitter'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#c8402e',
     r: [['ウォッカ', '45ml'], ['トマトジュース', '適量'], ['レモンジュース', '1tsp'], ['タバスコ・塩・こしょう', '少々']], how: 'ビルド', talk: 'トマトの旨みとスパイスの刺激で、食事にも合う一杯です。' },
-  { n: 'カシス・ソーダ', en: 'Cassis Soda', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#8a3a66',
-    r: [['クレーム・ド・カシス', '45ml'], ['ソーダ', '適量'], ['レモン', '1/8個']], how: 'ビルド', talk: '甘酸っぱいカシスをシュワッと割った、軽やかな一杯です。' },
-  { n: 'ピーチ・ウーロン', en: 'Peach Oolong', base: 'liqueur', str: 1, taste: ['sweet', 'fresh'], flavor: ['fruit'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#d9b07a',
-    r: [['クレーム・ド・ペシェ（ピーチ）', '45ml'], ['ウーロン茶', '適量']], how: 'ビルド', talk: 'ウーロン茶の渋みが、桃の甘さをすっきり引き締めます。' },
-  { n: 'チャイナ・ブルー', en: 'China Blue', base: 'liqueur', str: 1, taste: ['sweet', 'fresh'], flavor: ['fruit', 'citrus'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#f6d9de',
-    r: [['パライソ（ライチリキュール）', '45ml'], ['グレープフルーツジュース', '45ml'], ['トニックウォーター', '適量']], how: 'ビルド', talk: 'ライチの甘い香りを、グレープフルーツとトニックがさわやかにまとめます。' },
   { n: '梅酒ソーダ', en: 'Umeshu Soda', base: 'liqueur', str: 1, taste: ['sweet', 'fresh'], flavor: ['fruit'], fizz: true, scene: ['first', 'meal', 'after'], glass: 'highball', color: '#e3c25a',
     r: [['梅酒', '60ml'], ['ソーダ', '適量']], how: 'ビルド', talk: '梅の甘酸っぱさをシュワッと楽しめる、日本生まれの定番です。' },
   { n: 'アマレット・ジンジャー', en: 'Amaretto Ginger', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['cream'], fizz: true, scene: ['meal', 'after'], glass: 'highball', color: '#d29a55',
@@ -373,65 +329,190 @@ const COCKTAILS = [
     r: [['クランベリージュース', '90ml'], ['グレープフルーツジュース', '60ml']], how: 'ビルド', talk: 'お酒を使わなくても、甘酸っぱさと苦味のバランスが楽しめます。' },
   { n: 'ミント・レモネード', en: 'Mint Lemonade', base: 'none', str: 0, taste: ['fresh', 'sweet'], flavor: ['herb', 'citrus'], fizz: true, scene: ['first', 'meal', 'after'], glass: 'highball', color: '#e6f0b8',
     r: [['レモンジュース', '30ml'], ['シュガー・シロップ', '15ml'], ['ミントの葉', '8枚'], ['ソーダ', '適量']], how: 'ビルド', talk: 'ミントとレモンの香りが、口の中をさっぱりさせてくれます。' },
-  { n: 'ロング・アイランド・アイスティー', en: 'Long Island Iced Tea', base: 'vodka', str: 3, taste: ['sweet', 'fresh'], flavor: ['citrus'], fizz: true, scene: ['first', 'last'], glass: 'highball', color: '#9a5a30',
-    r: [['ウォッカ', '15ml'], ['ジン', '15ml'], ['ラム', '15ml'], ['テキーラ', '15ml'], ['ホワイト・キュラソー', '15ml'], ['レモンジュース', '25ml'], ['コーラ', '適量']], how: 'ビルド', talk: '紅茶は入っていないのに、見た目も味もアイスティーそっくりの一杯です。' },
   /* リキュール系（ミルク割り・オレンジジュース割り中心） */
-  { n: 'アマレット・ミルク', en: 'Amaretto Milk', base: 'liqueur', str: 1, taste: ['sweet','rich'], flavor: ['cream'], fizz: false, scene: ['meal','after','last'], glass: 'highball', color: '#e7cfae',
-    r: [['アマレット', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: 'アーモンドの甘い香りが、牛乳にやさしく溶け込んだ一杯です。' },
-  { n: '抹茶ミルク', en: 'Matcha Milk', base: 'liqueur', str: 1, taste: ['sweet','bitter'], flavor: ['cream','bitter'], fizz: false, scene: ['meal','after','last'], glass: 'highball', color: '#bcd58f',
-    r: [['抹茶リキュール', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: '抹茶のほろ苦さとミルクのまろやかさが調和した、和風の一杯です。' },
-  { n: 'ミドリ・ミルク', en: 'Midori Milk', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit','cream'], fizz: false, scene: ['meal','after'], glass: 'highball', color: '#cfe8a0',
-    r: [['ミドリ（メロンリキュール）', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: 'メロンの甘い香りとミルクで、デザートのような味わいです。' },
   { n: 'モーツァルト・ミルク', en: 'Mozart Milk', base: 'liqueur', str: 1, taste: ['sweet','rich'], flavor: ['cream'], fizz: false, scene: ['after','last'], glass: 'highball', color: '#b88a68',
     r: [['モーツァルト（チョコレートリキュール）', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: 'チョコレートの香りが広がる、甘くてなめらかな一杯です。' },
-  { n: 'ティフィン・ミルク', en: 'Tiffin Milk Tea', base: 'liqueur', str: 1, taste: ['sweet','rich'], flavor: ['cream','herb'], fizz: false, scene: ['meal','after','last'], glass: 'highball', color: '#d3a77c',
-    r: [['ティフィン（紅茶リキュール）', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: '紅茶の香りがふわっと立つ、ミルクティー風の一杯です。' },
-  { n: 'カシス・ミルク', en: 'Cassis Milk', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit','cream'], fizz: false, scene: ['meal','after'], glass: 'highball', color: '#c48aa8',
-    r: [['クレーム・ド・カシス', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: 'カシスの甘酸っぱさを、ミルクがまろやかに包みます。' },
   { n: 'ピーチ・ミルク', en: 'Peach Milk', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit','cream'], fizz: false, scene: ['meal','after'], glass: 'highball', color: '#f2cdb6',
     r: [['クレーム・ド・ペシェ（ピーチ）', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: '桃の甘い香りとミルクが、やさしく調和します。' },
-  { n: 'マンゴー・ミルク', en: 'Mango Milk', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit','cream'], fizz: false, scene: ['meal','after'], glass: 'highball', color: '#f6d37a',
-    r: [['マンゴヤン（マンゴーリキュール）', '45ml'], ['牛乳', '90ml']], how: 'ビルド', talk: 'マンゴーの濃厚な甘みを、ミルクでまろやかに楽しめます。' },
-  { n: 'ミスティア・オレンジ', en: 'Mistia Orange', base: 'liqueur', str: 1, taste: ['sweet','fresh'], flavor: ['fruit','citrus'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#f2d46a',
-    r: [['ミスティア（マスカットリキュール）', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'マスカットとオレンジの爽やかさが重なる、飲みやすい一杯です。' },
   { n: 'パッソア・オレンジ', en: 'Passoa Orange', base: 'liqueur', str: 1, taste: ['sweet','fresh'], flavor: ['fruit','citrus'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#f5a43a',
     r: [['パッソア（パッションフルーツリキュール）', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'パッションフルーツの酸味と香りを、オレンジが飲みやすくします。' },
-  { n: 'マンゴー・オレンジ', en: 'Mango Orange', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#f7b843',
-    r: [['マンゴヤン（マンゴーリキュール）', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'マンゴーとオレンジの甘みが、南国のジュースのように広がります。' },
-  { n: 'ミドリ・オレンジ', en: 'Midori Orange', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#c3cf4a',
-    r: [['ミドリ（メロンリキュール）', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'メロンとオレンジの甘い香りが重なる、フルーティな一杯です。' },
   { n: 'アマレット・オレンジ', en: 'Amaretto Orange', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit','cream'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#e1943b',
     r: [['アマレット', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'アーモンドの香ばしい甘さが、オレンジジュースを大人の味にします。' },
-  { n: 'カンパリ・オレンジ', en: 'Campari Orange', base: 'liqueur', str: 1, taste: ['bitter','sweet'], flavor: ['bitter','citrus'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#e8603a',
-    r: [['カンパリ', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'カンパリの苦味を、オレンジの甘さがやわらげてくれます。' },
   { n: 'カシス・グレープフルーツ', en: 'Cassis Grapefruit', base: 'liqueur', str: 1, taste: ['sweet','bitter'], flavor: ['fruit','citrus'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#c26a7a',
     r: [['クレーム・ド・カシス', '45ml'], ['グレープフルーツジュース', '適量']], how: 'ビルド', talk: 'カシスの甘みを、グレープフルーツの酸味と苦味が引き締めます。' },
-  { n: 'カシス・ウーロン', en: 'Cassis Oolong', base: 'liqueur', str: 1, taste: ['sweet','fresh'], flavor: ['fruit'], fizz: false, scene: ['meal'], glass: 'highball', color: '#6b3a4a',
-    r: [['クレーム・ド・カシス', '45ml'], ['ウーロン茶', '適量']], how: 'ビルド', talk: 'カシスの甘みを、ウーロン茶がすっきりさせます。' },
   { n: 'ミドリ・ソーダ', en: 'Midori Soda', base: 'liqueur', str: 1, taste: ['sweet','fresh'], flavor: ['fruit','citrus'], fizz: true, scene: ['first'], glass: 'highball', color: '#a8e07a',
     r: [['ミドリ（メロンリキュール）', '45ml'], ['ソーダ', '適量'], ['レモン', '1/8個']], how: 'ビルド', talk: 'メロンの香りが爽やかに広がる、鮮やかな緑色の一杯です。' },
   { n: 'パッソア・グレープフルーツ', en: 'Passoa Grapefruit', base: 'liqueur', str: 1, taste: ['fresh','sweet'], flavor: ['fruit','citrus'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#f5bb8a',
     r: [['パッソア（パッションフルーツリキュール）', '45ml'], ['グレープフルーツジュース', '適量']], how: 'ビルド', talk: 'パッションフルーツの香りに、グレープフルーツの酸味を合わせました。' },
   { n: 'カンパリ・グレープフルーツ', en: 'Campari Grapefruit', base: 'liqueur', str: 1, taste: ['bitter','fresh'], flavor: ['bitter','citrus'], fizz: false, scene: ['first','meal'], glass: 'highball', color: '#e86e62',
     r: [['カンパリ', '45ml'], ['グレープフルーツジュース', '適量']], how: 'ビルド', talk: 'ほろ苦さがほしいときにぴったりの、さっぱりした一杯です。' },
-  { n: 'ティフィン・ソーダ', en: 'Tiffin Soda', base: 'liqueur', str: 1, taste: ['fresh','sweet'], flavor: ['herb','citrus'], fizz: true, scene: ['first','meal'], glass: 'highball', color: '#b97a4a',
-    r: [['ティフィン（紅茶リキュール）', '45ml'], ['ソーダ', '適量'], ['レモン', '1/8個']], how: 'ビルド', talk: '紅茶の香りを、炭酸でさっぱりと楽しめます。' },
   { n: 'ミスティア・ソーダ', en: 'Mistia Soda', base: 'liqueur', str: 1, taste: ['fresh','sweet'], flavor: ['fruit','citrus'], fizz: true, scene: ['first','meal'], glass: 'highball', color: '#e6efb0',
     r: [['ミスティア（マスカットリキュール）', '45ml'], ['ソーダ', '適量']], how: 'ビルド', talk: 'マスカットの上品な甘さを、炭酸でさわやかに引き立てます。' },
   { n: 'ブルー・ラグーン', en: 'Blue Lagoon', base: 'vodka', str: 1, taste: ['fresh','sweet'], flavor: ['citrus'], fizz: true, scene: ['first','meal'], glass: 'highball', color: '#4cc4e8',
     r: [['ウォッカ', '30ml'], ['ブルー・キュラソー', '20ml'], ['レモンジュース', '15ml'], ['ソーダ', '適量']], how: 'ビルド', talk: '澄んだ青色が目を引く、さっぱりとした味わいの一杯です。' },
-  { n: 'ライチ・オレンジ', en: 'Lychee Orange', base: 'liqueur', str: 1, taste: ['sweet','fresh'], flavor: ['fruit','citrus'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#f7c98c',
-    r: [['パライソ（ライチリキュール）', '45ml'], ['オレンジジュース', '適量']], how: 'ビルド', talk: 'ライチの上品な甘さを、オレンジジュースが飲みやすくまとめる定番の一杯です。' },
-  { n: 'ライチ・ソーダ', en: 'Lychee Soda', base: 'liqueur', str: 1, taste: ['fresh','sweet'], flavor: ['fruit'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#f3e6e8',
-    r: [['パライソ（ライチリキュール）', '45ml'], ['ソーダ', '適量'], ['レモン', '1/8個']], how: 'ビルド', talk: 'ライチの上品な甘い香りを、炭酸でさっぱり楽しめます。' },
-  { n: 'ライチ・パイン', en: 'Lychee Pine', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#f6df86',
-    r: [['パライソ（ライチリキュール）', '45ml'], ['パイナップルジュース', '適量']], how: 'ビルド', talk: 'ライチの甘い香りと、パイナップルの南国らしい酸味が合う一杯です。' },
   { n: 'ライチ・グレープフルーツ', en: 'Lychee Grapefruit', base: 'liqueur', str: 1, taste: ['fresh','sweet'], flavor: ['fruit','citrus'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#f4c2b0',
     r: [['パライソ（ライチリキュール）', '45ml'], ['グレープフルーツジュース', '適量']], how: 'ビルド', talk: 'ライチの甘さを、グレープフルーツの酸味とほろ苦さが引き締めます。' },
   { n: 'ライチ・ウーロン', en: 'Lychee Oolong', base: 'liqueur', str: 1, taste: ['sweet','fresh'], flavor: ['fruit'], fizz: false, scene: ['first', 'meal'], glass: 'highball', color: '#d8b58a',
     r: [['パライソ（ライチリキュール）', '45ml'], ['ウーロン茶', '適量']], how: 'ビルド', talk: 'ウーロン茶の渋みが、ライチの甘さをすっきりさせます。' },
   { n: 'ライチ・ジンジャー', en: 'Lychee Ginger', base: 'liqueur', str: 1, taste: ['sweet'], flavor: ['fruit'], fizz: true, scene: ['first', 'meal'], glass: 'highball', color: '#ecd69a',
-    r: [['パライソ（ライチリキュール）', '45ml'], ['ジンジャーエール', '適量'], ['レモン', '1/8個']], how: 'ビルド', talk: 'ライチの香りを、甘いジンジャーエールで割った飲みやすい一杯です。' }
+    r: [['パライソ（ライチリキュール）', '45ml'], ['ジンジャーエール', '適量'], ['レモン', '1/8個']], how: 'ビルド', talk: 'ライチの香りを、甘いジンジャーエールで割った飲みやすい一杯です。' },
+  /* 当店のカクテルメニュー（menu: true）。診断結果の1番目・2番目に出る */
+  {"n": "カシスソーダ", "en": "Cassis Soda", "base": "liqueur", "str": 1, "taste": ["fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d5bec5", "r": [["クレーム・ド・カシス", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "カシスをソーダで割った、さっぱり飲める一杯です。", "fun": "甘酸っぱさと鮮やかな赤紫色で、おしゃれぶる席には必ず現れるベテランお酒。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "カシスウーロン", "en": "Cassis Oolong", "base": "liqueur", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["fruit", "herb"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#8a513b", "r": [["クレーム・ド・カシス", "45ml"], ["ウーロン茶", "適量"]], "how": "ビルド", "talk": "カシスをウーロン茶で割った、甘さがすっきりする一杯です。", "fun": "甘酸っぱさと鮮やかな赤紫色で、おしゃれぶる席には必ず現れるベテランお酒。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "カシスバック", "en": "Cassis Buck", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#cc9a62", "r": [["クレーム・ド・カシス", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "カシスを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "甘酸っぱさと鮮やかな赤紫色で、おしゃれぶる席には必ず現れるベテランお酒。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "カシスオレンジ", "en": "Cassis Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#d9883b", "r": [["クレーム・ド・カシス", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "カシスをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "甘酸っぱさと鮮やかな赤紫色で、おしゃれぶる席には必ず現れるベテランお酒。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "カシスパイン", "en": "Cassis Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#d8af69", "r": [["クレーム・ド・カシス", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "カシスをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "甘酸っぱさと鮮やかな赤紫色で、おしゃれぶる席には必ず現れるベテランお酒。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "カシスミルク", "en": "Cassis Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#d8bdc1", "r": [["クレーム・ド・カシス", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "カシスを牛乳で割った、まろやかな一杯です。", "fun": "甘酸っぱさと鮮やかな赤紫色で、おしゃれぶる席には必ず現れるベテランお酒。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "ファジーネーブル", "en": "Peach Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6ab4b", "r": [["クレーム・ド・ペシェ（ピーチ）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ピーチをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "グラスの中から桃の香りを放ち、全方位に愛嬌を振りまく永遠のモテ系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "ピーチフィズ", "en": "Peach Soda", "base": "liqueur", "str": 1, "taste": ["fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2e2d5", "r": [["クレーム・ド・ペシェ（ピーチ）", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ピーチをソーダで割った、さっぱり飲める一杯です。", "fun": "グラスの中から桃の香りを放ち、全方位に愛嬌を振りまく永遠のモテ系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ピーチパイン", "en": "Peach Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6d279", "r": [["クレーム・ド・ペシェ（ピーチ）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "ピーチをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "グラスの中から桃の香りを放ち、全方位に愛嬌を振りまく永遠のモテ系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "ピーチウーロン", "en": "Peach Oolong", "base": "liqueur", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["fruit", "herb"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#a7744b", "r": [["クレーム・ド・ペシェ（ピーチ）", "45ml"], ["ウーロン茶", "適量"]], "how": "ビルド", "talk": "ピーチをウーロン茶で割った、甘さがすっきりする一杯です。", "fun": "グラスの中から桃の香りを放ち、全方位に愛嬌を振りまく永遠のモテ系リキュール。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "マンゴーオレンジ", "en": "Mango Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f7ab2e", "r": [["マンゴヤン（マンゴーリキュール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "マンゴーをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "南国フルーツ系リキュール界で圧倒的な濃厚さと、ドロっとした甘さで君臨する完熟の誘惑者。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "マンゴーパイン", "en": "Mango Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6d25d", "r": [["マンゴヤン（マンゴーリキュール）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "マンゴーをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "南国フルーツ系リキュール界で圧倒的な濃厚さと、ドロっとした甘さで君臨する完熟の誘惑者。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "マンゴーミルク", "en": "Mango Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f6e0b4", "r": [["マンゴヤン（マンゴーリキュール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "マンゴーを牛乳で割った、まろやかな一杯です。", "fun": "南国フルーツ系リキュール界で圧倒的な濃厚さと、ドロっとした甘さで君臨する完熟の誘惑者。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "ライチソーダ", "en": "Lychee Soda", "base": "liqueur", "str": 1, "taste": ["fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2ede8", "r": [["パライソ（ライチリキュール）", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ライチをソーダで割った、さっぱり飲める一杯です。", "fun": "グラスに注いだ瞬間にエキゾチックで妖艶なライチの香りを爆発させる、アジアの至宝系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ライチオレンジ", "en": "Lychee Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6b65e", "r": [["パライソ（ライチリキュール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ライチをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "グラスに注いだ瞬間にエキゾチックで妖艶なライチの香りを爆発させる、アジアの至宝系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "ライチパイン", "en": "Lychee Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f5dd8c", "r": [["パライソ（ライチリキュール）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "ライチをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "グラスに注いだ瞬間にエキゾチックで妖艶なライチの香りを爆発させる、アジアの至宝系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "カルーアミルク", "en": "Kahlúa Milk", "base": "liqueur", "str": 1, "taste": ["rich", "sweet"], "flavor": ["cream", "bitter"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#c6baae", "r": [["カルーア（コーヒーリキュール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "コーヒーリキュールを牛乳で割った、まろやかな一杯です。", "fun": "濃厚なコーヒー豆とバニラの香りをふんだんにまとう、罪深きメキシコ生まれの甘覚キラー。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "カルーアウーロン", "en": "Kahlúa Oolong", "base": "liqueur", "str": 1, "taste": ["rich", "fresh", "sweet"], "flavor": ["cream", "bitter", "herb"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#784e28", "r": [["カルーア（コーヒーリキュール）", "45ml"], ["ウーロン茶", "適量"]], "how": "ビルド", "talk": "コーヒーリキュールをウーロン茶で割った、甘さがすっきりする一杯です。", "fun": "濃厚なコーヒー豆とバニラの香りをふんだんにまとう、罪深きメキシコ生まれの甘覚キラー。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "カルーアオレンジ", "en": "Kahlúa Orange", "base": "liqueur", "str": 1, "taste": ["rich", "sweet", "fresh"], "flavor": ["cream", "bitter", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#c78428", "r": [["カルーア（コーヒーリキュール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "コーヒーリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "濃厚なコーヒー豆とバニラの香りをふんだんにまとう、罪深きメキシコ生まれの甘覚キラー。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "マリブコーク", "en": "Malibu Cola", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit", "cream"], "fizz": true, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#7a5d52", "r": [["マリブ（ココナッツリキュール）", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "ココナッツリキュールをコーラで割った、気軽に飲める一杯です。", "fun": "ひと口飲むだけで、ハワイのビーチベッドで昼寝している気分になれるココナッツ暴君。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "マリブオレンジ", "en": "Malibu Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "cream", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f7bb5f", "r": [["マリブ（ココナッツリキュール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ココナッツリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "ひと口飲むだけで、ハワイのビーチベッドで昼寝している気分になれるココナッツ暴君。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "マリブパイン", "en": "Malibu Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f6e28d", "r": [["マリブ（ココナッツリキュール）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "ココナッツリキュールをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "ひと口飲むだけで、ハワイのビーチベッドで昼寝している気分になれるココナッツ暴君。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "マリブミルク", "en": "Malibu Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f5f0e5", "r": [["マリブ（ココナッツリキュール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "ココナッツリキュールを牛乳で割った、まろやかな一杯です。", "fun": "ひと口飲むだけで、ハワイのビーチベッドで昼寝している気分になれるココナッツ暴君。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "チョコミルク", "en": "Choco Milk", "base": "liqueur", "str": 1, "taste": ["rich", "sweet"], "flavor": ["cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#cfbfb2", "r": [["チョコレートリキュール", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "チョコレートリキュールを牛乳で割った、まろやかな一杯です。", "fun": "カカオの芳醇で濃厚な香りとドロっとした甘さで、糖分とアルコールを連れ去る誘惑者。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "チョコオレンジ", "en": "Choco Orange", "base": "liqueur", "str": 1, "taste": ["rich", "sweet", "fresh"], "flavor": ["cream", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#d0892c", "r": [["チョコレートリキュール", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "チョコレートリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "カカオの芳醇で濃厚な香りとドロっとした甘さで、糖分とアルコールを連れ去る誘惑者。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "ティフィンソーダ", "en": "Tiffin Soda", "base": "liqueur", "str": 1, "taste": ["fresh"], "flavor": ["herb"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e2d0bd", "r": [["ティフィン（紅茶リキュール）", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "紅茶リキュールをソーダで割った、さっぱり飲める一杯です。", "fun": "グラスから上品な香りを優雅に漂わせる、お茶の皮をかぶった貴族系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ティフィンバック", "en": "Tiffin Buck", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["herb"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d9ac5a", "r": [["ティフィン（紅茶リキュール）", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "紅茶リキュールを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "グラスから上品な香りを優雅に漂わせる、お茶の皮をかぶった貴族系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "ティフィンミルク", "en": "Tiffin Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["herb", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#e5cfb9", "r": [["ティフィン（紅茶リキュール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "紅茶リキュールを牛乳で割った、まろやかな一杯です。", "fun": "グラスから上品な香りを優雅に漂わせる、お茶の皮をかぶった貴族系リキュール。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "杏仁ソーダ", "en": "Amaretto Soda", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["cream"], "fizz": true, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#e9d9c0", "r": [["アマレット", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "アマレットをソーダで割った、さっぱり飲める一杯です。", "fun": "気品あるアーモンドや杏仁の香りを濃厚に漂わせる、イタリア生まれの甘美な罪人。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "杏仁コーク", "en": "Amaretto Cola", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["cream"], "fizz": true, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#704529", "r": [["アマレット", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "アマレットをコーラで割った、気軽に飲める一杯です。", "fun": "気品あるアーモンドや杏仁の香りを濃厚に漂わせる、イタリア生まれの甘美な罪人。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "杏仁ミルク", "en": "Amaretto Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#ecd8bc", "r": [["アマレット", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "アマレットを牛乳で割った、まろやかな一杯です。", "fun": "気品あるアーモンドや杏仁の香りを濃厚に漂わせる、イタリア生まれの甘美な罪人。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "パッソアソーダ", "en": "Passoa Soda", "base": "liqueur", "str": 1, "taste": ["fresh"], "flavor": ["fruit", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2ddb9", "r": [["パッソア（パッションフルーツリキュール）", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "パッソアをソーダで割った、さっぱり飲める一杯です。", "fun": "弾けるような酸味と南国フルーツ特有の甘酸っぱい香りで、場をリゾートアイランドに変えるエネルギッシュな罪人。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "パッソアコーク", "en": "Passoa Cola", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#794922", "r": [["パッソア（パッションフルーツリキュール）", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "パッソアをコーラで割った、気軽に飲める一杯です。", "fun": "弾けるような酸味と南国フルーツ特有の甘酸っぱい香りで、場をリゾートアイランドに変えるエネルギッシュな罪人。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "パッソアパイン", "en": "Passoa Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6cd5d", "r": [["パッソア（パッションフルーツリキュール）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "パッソアをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "弾けるような酸味と南国フルーツ特有の甘酸っぱい香りで、場をリゾートアイランドに変えるエネルギッシュな罪人。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "ヨーギパイン", "en": "Yogurt Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["cream", "fruit"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f6e18b", "r": [["ヨーグルトリキュール", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "ヨーグルトリキュールをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "「私、健康的な乳酸菌飲料ですけど？」とボケ顔をかます、罪深き白き悪魔。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "ヨーギコーク", "en": "Yogurt Cola", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["cream", "fruit"], "fizz": true, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#795d50", "r": [["ヨーグルトリキュール", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "ヨーグルトリキュールをコーラで割った、気軽に飲める一杯です。", "fun": "「私、健康的な乳酸菌飲料ですけど？」とボケ顔をかます、罪深き白き悪魔。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ヨーギオレンジ", "en": "Yogurt Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["cream", "fruit", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f7ba5d", "r": [["ヨーグルトリキュール", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ヨーグルトリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "「私、健康的な乳酸菌飲料ですけど？」とボケ顔をかます、罪深き白き悪魔。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "柑橘トニック", "en": "Citrus Tonic", "base": "liqueur", "str": 1, "taste": ["fresh", "bitter"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f3edda", "r": [["コアントロー（オレンジリキュール）", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "コアントローをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。", "fun": "オレンジの皮の香りを極限まで凝縮した、「エレガントな暴力」系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "柑橘バック", "en": "Citrus Buck", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#eac976", "r": [["コアントロー（オレンジリキュール）", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "コアントローを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "オレンジの皮の香りを極限まで凝縮した、「エレガントな暴力」系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "ベリーミルク", "en": "Berry Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f2c8c6", "r": [["ストロベリーリキュール", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "ストロベリーリキュールを牛乳で割った、まろやかな一杯です。", "fun": "鮮やかな真紅のルックスと甘く切ない香りで、可愛くアピールしてくる小悪魔系リキュール。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "ベリーコーク", "en": "Berry Cola", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#763533", "r": [["ストロベリーリキュール", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "ストロベリーリキュールをコーラで割った、気軽に飲める一杯です。", "fun": "鮮やかな真紅のルックスと甘く切ない香りで、可愛くアピールしてくる小悪魔系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ベリーファジー", "en": "Berry Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f49240", "r": [["ストロベリーリキュール", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ストロベリーリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "鮮やかな真紅のルックスと甘く切ない香りで、可愛くアピールしてくる小悪魔系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "ベリートニック", "en": "Berry Tonic", "base": "liqueur", "str": 1, "taste": ["fresh", "bitter"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#efc9cb", "r": [["ストロベリーリキュール", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "ストロベリーリキュールをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。", "fun": "鮮やかな真紅のルックスと甘く切ない香りで、可愛くアピールしてくる小悪魔系リキュール。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "メロンミルク", "en": "Melon Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#dde9c2", "r": [["ミドリ（メロンリキュール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "メロンリキュールを牛乳で割った、まろやかな一杯です。", "fun": "マスクメロンの芳醇すぎる香りで主張してくる、どこか懐かしいパーティーの主役。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "メロンバック", "en": "Melon Buck", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d1c763", "r": [["ミドリ（メロンリキュール）", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "メロンリキュールを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "マスクメロンの芳醇すぎる香りで主張してくる、どこか懐かしいパーティーの主役。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "メロンパイン", "en": "Melon Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#dddb6a", "r": [["ミドリ（メロンリキュール）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "メロンリキュールをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "マスクメロンの芳醇すぎる香りで主張してくる、どこか懐かしいパーティーの主役。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "メロンオレンジ", "en": "Melon Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#deb43c", "r": [["ミドリ（メロンリキュール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "メロンリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "マスクメロンの芳醇すぎる香りで主張してくる、どこか懐かしいパーティーの主役。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "マスカットミルク", "en": "Muscat Milk", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#ebedcb", "r": [["ミスティア（マスカットリキュール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "マスカットリキュールを牛乳で割った、まろやかな一杯です。", "fun": "みずみずしいマスカットの香りを放ち、澄ました顔で微笑む、フランス生まれの優雅な罠。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "マスカットバック", "en": "Muscat Buck", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e0ca6c", "r": [["ミスティア（マスカットリキュール）", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "マスカットリキュールを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "みずみずしいマスカットの香りを放ち、澄ました顔で微笑む、フランス生まれの優雅な罠。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "マスカットパイン", "en": "Muscat Pine", "base": "liqueur", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#ecdf73", "r": [["ミスティア（マスカットリキュール）", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "マスカットリキュールをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "みずみずしいマスカットの香りを放ち、澄ました顔で微笑む、フランス生まれの優雅な罠。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "マスカットファジー", "en": "Muscat Orange", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#edb845", "r": [["ミスティア（マスカットリキュール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "マスカットリキュールをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "みずみずしいマスカットの香りを放ち、澄ました顔で微笑む、フランス生まれの優雅な罠。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "抹茶ミルク", "en": "Matcha Milk", "base": "liqueur", "str": 1, "taste": ["bitter", "sweet", "rich"], "flavor": ["herb", "bitter", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#dee3c2", "r": [["抹茶リキュール", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "抹茶リキュールを牛乳で割った、まろやかな一杯です。", "fun": "ふくよかな茶の香りを漂わせ、あまりにも正論な顔で近づいてくる和の刺客。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "抹茶グリーン", "en": "Matcha Green Tea", "base": "liqueur", "str": 1, "taste": ["bitter", "fresh"], "flavor": ["herb", "bitter"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#90af5e", "r": [["抹茶リキュール", "45ml"], ["緑茶", "適量"]], "how": "ビルド", "talk": "抹茶リキュールを緑茶で割った、さっぱりした和風の一杯です。", "fun": "ふくよかな茶の香りを漂わせ、あまりにも正論な顔で近づいてくる和の刺客。", "menu": true, "priceText": "¥800", "deco": {}},
+  {"n": "抹茶ウーロン", "en": "Matcha Oolong", "base": "liqueur", "str": 1, "taste": ["bitter", "fresh", "sweet"], "flavor": ["herb", "bitter"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#90773c", "r": [["抹茶リキュール", "45ml"], ["ウーロン茶", "適量"]], "how": "ビルド", "talk": "抹茶リキュールをウーロン茶で割った、甘さがすっきりする一杯です。", "fun": "ふくよかな茶の香りを漂わせ、あまりにも正論な顔で近づいてくる和の刺客。", "menu": true, "priceText": "¥800", "deco": {"straw": 1}},
+  {"n": "カンパリソーダ", "en": "Campari Soda", "base": "liqueur", "str": 1, "taste": ["bitter", "fresh"], "flavor": ["bitter", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#eabcb9", "r": [["カンパリ", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "カンパリをソーダで割った、さっぱり飲める一杯です。", "fun": "鮮烈な真紅のボディと圧倒的な苦味で、大人アピールをキメてくるイタリア出身の伊達男。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "カンパリバック", "en": "Campari Buck", "base": "liqueur", "str": 1, "taste": ["bitter", "sweet"], "flavor": ["bitter", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e29855", "r": [["カンパリ", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "カンパリを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "鮮烈な真紅のボディと圧倒的な苦味で、大人アピールをキメてくるイタリア出身の伊達男。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "カンパリオレンジ", "en": "Campari Orange", "base": "liqueur", "str": 1, "taste": ["bitter", "sweet", "fresh"], "flavor": ["bitter", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#ee852e", "r": [["カンパリ", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "カンパリをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "鮮烈な真紅のボディと圧倒的な苦味で、大人アピールをキメてくるイタリア出身の伊達男。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "カンパリパイン", "en": "Campari Pine", "base": "liqueur", "str": 1, "taste": ["bitter", "sweet"], "flavor": ["bitter", "citrus", "fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#eeac5d", "r": [["カンパリ", "45ml"], ["パイナップルジュース", "適量"]], "how": "ビルド", "talk": "カンパリをパイナップルジュースで割った、南国らしい甘さの一杯です。", "fun": "鮮烈な真紅のボディと圧倒的な苦味で、大人アピールをキメてくるイタリア出身の伊達男。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "ジントニック", "en": "Gin Tonic", "base": "gin", "str": 1, "taste": ["fresh", "bitter"], "flavor": ["herb", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f3f3eb", "r": [["ジン", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "ジンをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。", "fun": "ひと口飲むだけで、薬草とスパイスの森に迷い込んだような気分になる、香り爆弾系スピリッツ。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ジンバック", "en": "Gin Buck", "base": "gin", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["herb", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#eacf87", "r": [["ジン", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "ジンを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "ひと口飲むだけで、薬草とスパイスの森に迷い込んだような気分になる、香り爆弾系スピリッツ。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "ジンリッキー", "en": "Gin Soda", "base": "gin", "str": 1, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f3f3eb", "r": [["ジン", "45ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ジンをソーダで割った、さっぱり飲める一杯です。", "fun": "ひと口飲むだけで、薬草とスパイスの森に迷い込んだような気分になる、香り爆弾系スピリッツ。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "オレンジブロッサム", "en": "Gin Orange", "base": "gin", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["herb", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f7bc60", "r": [["ジン", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ジンをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "ひと口飲むだけで、薬草とスパイスの森に迷い込んだような気分になる、香り爆弾系スピリッツ。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "ウォッカトニック", "en": "Vodka Tonic", "base": "vodka", "str": 1, "taste": ["fresh", "bitter"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f3f3eb", "r": [["ウォッカ", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "ウォッカをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。", "fun": "無味・無臭・無色の仮面をかぶりながら、しれっと40度を叩き出す、最もストイックな強者。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ルシアンコーク", "en": "Vodka Cola", "base": "vodka", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#7a5e53", "r": [["ウォッカ", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "ウォッカをコーラで割った、気軽に飲める一杯です。", "fun": "無味・無臭・無色の仮面をかぶりながら、しれっと40度を叩き出す、最もストイックな強者。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "モスコミュール", "en": "Vodka Buck", "base": "vodka", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#eacf87", "r": [["ウォッカ", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "ウォッカを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "無味・無臭・無色の仮面をかぶりながら、しれっと40度を叩き出す、最もストイックな強者。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "ブルドッグ", "en": "Vodka Grapefruit", "base": "vodka", "str": 1, "taste": ["fresh", "bitter"], "flavor": ["citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6c3a5", "r": [["ウォッカ", "45ml"], ["グレープフルーツジュース", "適量"]], "how": "ビルド", "talk": "ウォッカをグレープフルーツジュースで割った、ほろ苦さのある一杯です。", "fun": "無味・無臭・無色の仮面をかぶりながら、しれっと40度を叩き出す、最もストイックな強者。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "スクリュードライバー", "en": "Vodka Orange", "base": "vodka", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f7bc60", "r": [["ウォッカ", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ウォッカをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "無味・無臭・無色の仮面をかぶりながら、しれっと40度を叩き出す、最もストイックな強者。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "ラムトニック", "en": "Rum Tonic", "base": "rum", "str": 1, "taste": ["sweet", "fresh", "bitter"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2f0e6", "r": [["ホワイト・ラム", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "ラムをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。", "fun": "サトウキビの蜜を原料にした、飲むだけで陽気になるトロピカル・アウトロー。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ラムコーク", "en": "Rum Cola", "base": "rum", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#795b4e", "r": [["ホワイト・ラム", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "ラムをコーラで割った、気軽に飲める一杯です。", "fun": "サトウキビの蜜を原料にした、飲むだけで陽気になるトロピカル・アウトロー。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "ラムバック", "en": "Rum Buck", "base": "rum", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e9cc82", "r": [["ホワイト・ラム", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "ラムを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "サトウキビの蜜を原料にした、飲むだけで陽気になるトロピカル・アウトロー。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "キューバオレンジ", "en": "Rum Orange", "base": "rum", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6b95b", "r": [["ホワイト・ラム", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ラムをオレンジジュースで割った、甘く飲みやすい一杯です。", "fun": "サトウキビの蜜を原料にした、飲むだけで陽気になるトロピカル・アウトロー。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "テコニック", "en": "Tequila Tonic", "base": "tequila", "str": 1, "taste": ["fresh", "bitter"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f3f3eb", "r": [["テキーラ", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "テキーラをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。", "fun": "爽やかなアガベの香りで、ショットグラスに注がれた瞬間に場を無法地帯に変える、夜のクラクション。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "テキーラコーク", "en": "Tequila Cola", "base": "tequila", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#7a5e53", "r": [["テキーラ", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "テキーラをコーラで割った、気軽に飲める一杯です。", "fun": "爽やかなアガベの香りで、ショットグラスに注がれた瞬間に場を無法地帯に変える、夜のクラクション。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "テキーラバック", "en": "Tequila Buck", "base": "tequila", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#eacf87", "r": [["テキーラ", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "テキーラを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "爽やかなアガベの香りで、ショットグラスに注がれた瞬間に場を無法地帯に変える、夜のクラクション。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "ゼニス", "en": "Zenith", "base": "gin", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["herb", "citrus", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2e8a0", "r": [["ジン", "45ml"], ["パイナップルジュース", "適量"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ジンをパイナップルジュースとソーダで割った、南国らしくさっぱりした一杯です。", "fun": "ひと口飲むだけで、薬草とスパイスの森に迷い込んだような気分になる、香り爆弾系スピリッツ。", "menu": true, "priceText": "¥800", "deco": {"g": ["cherry"]}},
+  {"n": "ジンライム", "en": "Gin Lime", "base": "gin", "str": 2, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "rocks", "color": "#eaf2d8", "r": [["ジン", "45ml"], ["ライムジュース", "15ml"]], "how": "ビルド", "talk": "ジンにライムを搾った、すっきり香り高い一杯です。オンザロックで。", "fun": "ひと口飲むだけで、薬草とスパイスの森に迷い込んだような気分になる、香り爆弾系スピリッツ。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "モヒート", "en": "Mojito", "base": "rum", "str": 1, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e4f0cc", "r": [["ホワイト・ラム", "45ml"], ["ミントの葉（自家製ミント）", "たっぷり"], ["ライム", "1/2個"], ["シュガー・シロップ", "10ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "自家製ミントとソーダで仕上げた、爽やかな定番の一杯です。", "fun": "サトウキビの蜜を原料にした、飲むだけで陽気になるトロピカル・アウトロー。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
+  {"n": "テキーラサンライズ", "en": "Tequila Sunrise", "base": "tequila", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f4932a", "r": [["テキーラ", "45ml"], ["オレンジジュース", "適量"], ["グレナデン・シロップ", "15ml"]], "how": "ビルド", "talk": "グレナデンとオレンジジュースで、朝焼けのような色合いに仕上げた一杯です。", "fun": "爽やかなアガベの香りで、ショットグラスに注がれた瞬間に場を無法地帯に変える、夜のクラクション。", "menu": true, "priceText": "¥900", "deco": {"g": ["orange"], "straw": 1, "top": "#f7b84a", "layer": "#d3281c"}},
+  {"n": "スプモーニ", "en": "Spumoni", "base": "liqueur", "str": 1, "taste": ["bitter", "fresh"], "flavor": ["bitter", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e86e62", "r": [["カンパリ", "30ml"], ["グレープフルーツジュース", "適量"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "カンパリをグレープフルーツジュースとトニックで割った、ほろ苦くさっぱりした一杯です。", "fun": "鮮烈な真紅のボディと圧倒的な苦味で、大人アピールをキメてくるイタリア出身の伊達男。", "menu": true, "priceText": "¥950", "deco": {"g": ["orange"]}},
+  {"n": "シャンディガフ", "en": "Shandy Gaff", "base": "beer", "str": 1, "taste": ["fresh", "sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e8c060", "r": [["ビール", "1/2量"], ["ジンジャーエール", "1/2量"]], "how": "ビルド", "talk": "ビールを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "ビールが苦手でも、甘いジンジャーエールが仲を取り持ってくれます。", "menu": true, "priceText": "¥800", "deco": {"foam": 1}},
+  {"n": "レッドアイ", "en": "Red Eye", "base": "beer", "str": 1, "taste": ["bitter", "rich"], "flavor": ["herb"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#c84a2a", "r": [["ビール", "1/2量"], ["トマトジュース", "1/2量"]], "how": "ビルド", "talk": "ビールをトマトジュースで割った、旨みのある一杯です。", "fun": "見た目は真っ赤ですが、味はまろやかなトマトのビールです。", "menu": true, "priceText": "¥800", "deco": {"foam": 1}},
+  {"n": "ビアコーク", "en": "Beer & Cola", "base": "beer", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#6a3a1a", "r": [["ビール", "1/2量"], ["コーラ", "1/2量"]], "how": "ビルド", "talk": "ビールをコーラで割った、気軽に飲める一杯です。", "fun": "ビールの苦味をコーラの甘さが包んで、意外とやさしい味です。", "menu": true, "priceText": "¥800", "deco": {"foam": 1}},
+  {"n": "ビアパイン", "en": "Beer & Pine", "base": "beer", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f0d060", "r": [["ビール", "1/2量"], ["パイナップルジュース", "1/2量"]], "how": "ビルド", "talk": "ビールをパイナップルジュースで割った、南国らしい一杯です。", "fun": "ビールの泡の下に、南の島が隠れています。", "menu": true, "priceText": "¥800", "deco": {"foam": 1, "g": ["cherry"]}},
+  {"n": "サブマリン", "en": "Submarine", "base": "beer", "str": 2, "taste": ["fresh"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e8b84a", "r": [["ビール", "適量"], ["テキーラ（ショット）", "1杯"]], "how": "ビルド", "talk": "メキシコ発祥。豪快にテキーラショットをビールにぶち込む、サルースタイルのカクテルです。", "fun": "グラスの中にショットが沈んでいく、見た目からして豪快な一杯です。", "menu": true, "priceText": "¥1,150", "deco": {"foam": 1}},
+  {"n": "ボイラーメイカー", "en": "Boilermaker", "base": "whisky", "str": 2, "taste": ["bitter", "rich"], "flavor": ["bitter"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d6a040", "r": [["ビール", "適量"], ["ウイスキー（ショット）", "1杯"]], "how": "ビルド", "talk": "アメリカ発祥。景気づけにウイスキーショットをビールにぶち込む、アメリカンスタイルのカクテルです。", "fun": "景気づけの一杯。名前のとおり、体が温まるパワフルな味です。", "menu": true, "priceText": "¥1,150", "deco": {"foam": 1}},
+  {"n": "キティ", "en": "Kitty", "base": "wine", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#8a2a3a", "r": [["赤ワイン", "1/2量"], ["ジンジャーエール", "1/2量"]], "how": "ビルド", "talk": "赤ワインを甘いジンジャーエールで割った、飲みやすい一杯です。", "fun": "赤ワインが苦手でも、ジンジャーエールで一気に飲みやすくなります。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "カリモーチョ", "en": "Calimocho", "base": "wine", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#5a1e28", "r": [["赤ワイン", "1/2量"], ["コーラ", "1/2量"]], "how": "ビルド", "talk": "赤ワインをコーラで割った、スペイン生まれの気軽な一杯です。", "fun": "赤ワインとコーラの組み合わせは、飲んでみると意外としっくりきます。", "menu": true, "priceText": "¥800", "deco": {"g": ["lime"]}},
+  {"n": "オペレーター", "en": "Operator", "base": "wine", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f3e6a8", "r": [["白ワイン", "1/2量"], ["ジンジャーエール", "1/2量"]], "how": "ビルド", "talk": "白ワインを甘いジンジャーエールで割った、さっぱりした一杯です。", "fun": "白ワインの香りに、ジンジャーエールの甘さがよく合います。", "menu": true, "priceText": "¥800", "deco": {"g": ["lemon"]}},
+  {"n": "ワインクーラー", "en": "Wine Cooler", "base": "wine", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6c26a", "r": [["白ワイン", "1/2量"], ["オレンジジュース", "1/2量"]], "how": "ビルド", "talk": "白ワインをオレンジジュースで割った、飲みやすい一杯です。", "fun": "ジュース感覚で飲める、軽やかなワインカクテルです。", "menu": true, "priceText": "¥800", "deco": {"g": ["orange"]}},
+  {"n": "エルディアブロ", "en": "El Diablo", "base": "tequila", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#a8465a", "r": [["テキーラ", "30ml"], ["クレーム・ド・カシス", "15ml"], ["ライムジュース", "15ml"], ["ジンジャーエール", "適量"]], "how": "ビルド", "talk": "テキーラの個性とカシスの甘酸っぱさが絶妙に絡み合う、情熱的で大人なカクテルです。", "fun": "名前は「悪魔」。カシス先輩とテキーラの、情熱的なコラボです。", "menu": true, "priceText": "¥1,350", "deco": {"g": ["lime"]}},
+  {"n": "クリームピーチ", "en": "Cream Peach", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["after", "last"], "glass": "coupe", "color": "#f6d8c8", "r": [["クレーム・ド・ペシェ（ピーチ）", "適量"], ["生クリーム", "適量"]], "how": "シェーク", "talk": "生クリームのまろやかなコクが加わった、高級な桃のデザートカクテルです。", "fun": "グラスの中から桃の香りを放ち、全方位に愛嬌を振りまく永遠のモテ系リキュール。", "menu": true, "priceText": "¥1,250", "deco": {"g": ["cherry"]}},
+  {"n": "マンゴーサンダー", "en": "Mango Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#f7d37a", "r": [["マンゴヤン（マンゴーリキュール）", "適量"], ["牛乳・生クリーム", "適量"]], "how": "シェーク", "talk": "まろやかなコクと濃厚な口当たりが最高なカクテルです。", "fun": "南国フルーツ系リキュール界で圧倒的な濃厚さと、ドロっとした甘さで君臨する完熟の誘惑者。", "menu": true, "priceText": "¥1,550", "deco": {"straw": 1}},
+  {"n": "チャイナブルー", "en": "China Blue", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#bfe4f2", "r": [["パライソ（ライチリキュール）", "45ml"], ["グレープフルーツジュース", "適量"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "青みが美しく甘くてスッキリな王道カクテル。気分でロングカクテル、ショートカクテルを使い分けると大人です。", "fun": "ライチの香りで、気分は南国の楊貴妃です。", "menu": true, "priceText": "¥1,050（ロング）／¥1,250（ショート）", "deco": {"g": ["lime"]}},
+  {"n": "ブラックルシアン", "en": "Black Russian", "base": "vodka", "str": 2, "taste": ["rich", "sweet"], "flavor": ["cream", "bitter"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "rocks", "color": "#3a2418", "r": [["ウォッカ", "40ml"], ["カルーア（コーヒーリキュール）", "20ml"]], "how": "ビルド", "talk": "ウォッカのキリッとした抜け感と芳醇なコーヒーの甘みがダイレクトに味わえる、渋くて力強いカクテルです。", "fun": "名前は黒くてロシア。見た目も味も、渋くて力強い一杯です。", "menu": true, "priceText": "¥1,050", "deco": {}},
+  {"n": "パイナップルマティーニ", "en": "Pineapple Martini", "base": "vodka", "str": 2, "taste": ["fresh", "sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#f6e48a", "r": [["ウォッカ", "適量"], ["パイナップルジュース", "適量"]], "how": "シェーク", "talk": "ウォッカと合わさり切れ味抜群、南国リゾートカクテルです。", "fun": "マティーニの形をした、南国リゾートです。", "menu": true, "priceText": "¥1,250", "deco": {"g": ["cherry"]}},
+  {"n": "チョコサンダー", "en": "Choco Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#8a5a40", "r": [["チョコレートリキュール", "適量"], ["牛乳・生クリーム", "適量"]], "how": "シェーク", "talk": "濃厚でリッチな味わいの大人のチョコミルクです。", "fun": "カカオの芳醇で濃厚な香りとドロっとした甘さで、糖分とアルコールを連れ去る誘惑者。", "menu": true, "priceText": "¥1,350", "deco": {"straw": 1}},
+  {"n": "アールグレイマティーニ", "en": "Earl Grey Martini", "base": "liqueur", "str": 2, "taste": ["fresh", "rich"], "flavor": ["herb"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#d8b890", "r": [["ウォッカ", "適量"], ["紅茶（アールグレイ）", "適量"]], "how": "シェーク", "talk": "上品で奥行きのある香りを楽しむカクテルです。", "fun": "上品な香りを、マティーニの形で楽しめます。", "menu": true, "priceText": "¥1,450", "deco": {"g": ["peel"]}},
+  {"n": "ゴッドファーザー", "en": "Godfather", "base": "whisky", "str": 2, "taste": ["rich", "sweet"], "flavor": ["cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#c98a4a", "r": [["ウイスキー", "45ml"], ["アマレット", "15ml"]], "how": "ビルド", "talk": "ウイスキーの力強さと杏仁豆腐風の香ばしい甘みが絶妙なカクテルです。", "fun": "注文するとき、つい声が低くなってしまうのが決まりです。", "menu": true, "priceText": "¥1,250", "deco": {}},
+  {"n": "オーガスタセブン", "en": "August Seven", "base": "liqueur", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6c64a", "r": [["パッソア（パッションフルーツリキュール）", "適量"], ["パイナップルジュース", "適量"], ["レモンジュース", "適量"]], "how": "ビルド", "talk": "パッションフルーツの華やかな香りと甘みに、パイナップルとレモンの爽やかな酸味が絶妙にマッチした、日本のBAR発祥のカクテルです。", "fun": "弾けるような酸味と南国フルーツ特有の甘酸っぱい香りで、場をリゾートアイランドに変えるエネルギッシュな罪人。", "menu": true, "priceText": "¥1,250", "deco": {"g": ["lemon"], "straw": 1}},
+  {"n": "ヨーギサンダー", "en": "Yogi Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#f6f0dc", "r": [["ヨーグルトリキュール", "適量"], ["生クリーム", "適量"]], "how": "シェーク", "talk": "生クリームのまろやかさとヨーグルトの酸味が合わさり、極上の口当たりのカクテルです。", "fun": "「私、健康的な乳酸菌飲料ですけど？」とボケ顔をかます、罪深き白き悪魔。", "menu": true, "priceText": "¥1,350", "deco": {"straw": 1}},
+  {"n": "ロングアイランドアイスティー", "en": "Long Island Iced Tea", "base": "vodka", "str": 3, "taste": ["sweet", "fresh"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "last"], "glass": "highball", "color": "#9a5a30", "r": [["ウォッカ", "15ml"], ["ジン", "15ml"], ["ラム", "15ml"], ["テキーラ", "15ml"], ["コアントロー", "15ml"], ["レモンジュース", "適量"], ["コーラ", "適量"]], "how": "ビルド", "talk": "踊ろう、狂おう、飲もう。酒ザコ禁制のスーパーアルコールカクテル。（驚くほどスッキリと飲みやすいです。）", "fun": "紅茶の顔をして、実は5種類のお酒が入っています。ゆっくり飲んでください。", "menu": true, "priceText": "¥1,550", "deco": {"g": ["lemon"], "straw": 1}},
+  {"n": "イチゴサンダー", "en": "Strawberry Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#f2a0b0", "r": [["ストロベリーリキュール", "適量"], ["牛乳・生クリーム", "適量"]], "how": "シェーク", "talk": "大人のイチゴミルクカクテル。（濃厚まったり系）", "fun": "鮮やかな真紅のルックスと甘く切ない香りで、可愛くアピールしてくる小悪魔系リキュール。", "menu": true, "priceText": "¥1,350", "deco": {"straw": 1}},
+  {"n": "メロメロサンダー", "en": "Melon Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#c8e6a0", "r": [["ミドリ（メロンリキュール）", "適量"], ["牛乳・生クリーム", "適量"]], "how": "シェーク", "talk": "大人のメロンミルクカクテル。（濃厚まったり系）", "fun": "マスクメロンの芳醇すぎる香りで主張してくる、どこか懐かしいパーティーの主役。", "menu": true, "priceText": "¥1,350", "deco": {"straw": 1}},
+  {"n": "マスカットサンダー", "en": "Muscat Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#e6efc0", "r": [["ミスティア（マスカットリキュール）", "適量"], ["牛乳・生クリーム", "適量"]], "how": "シェーク", "talk": "大人のマスカットミルクカクテル。（濃厚まったり系）", "fun": "みずみずしいマスカットの香りを放ち、澄ました顔で微笑む、フランス生まれの優雅な罠。", "menu": true, "priceText": "¥1,350", "deco": {"straw": 1}},
+  {"n": "抹茶サンダー", "en": "Matcha Thunder", "base": "liqueur", "str": 1, "taste": ["sweet", "bitter"], "flavor": ["herb", "cream"], "fizz": false, "scene": ["after", "last"], "glass": "rocks", "color": "#c4d8a0", "r": [["抹茶リキュール", "適量"], ["ウォッカ", "適量"], ["牛乳", "適量"]], "how": "シェーク", "talk": "ウォッカのキレが絶妙にマッチした、甘さが引き締まった大人な味わいのカクテルです。", "fun": "ふくよかな茶の香りを漂わせ、あまりにも正論な顔で近づいてくる和の刺客。", "menu": true, "priceText": "¥1,350", "deco": {"straw": 1}},
+  {"n": "キングストン", "en": "Kingston", "base": "liqueur", "str": 2, "taste": ["bitter", "sweet"], "flavor": ["bitter", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#c8503a", "r": [["カンパリ", "適量"], ["ラム", "適量"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "カンパリの深い苦味と、ラムの芳醇な甘みが絶妙な、ビター＆スイートカクテルです。", "fun": "ほろ苦さと甘さが同居する、大人のカクテルです。", "menu": true, "priceText": "¥1,250", "deco": {"g": ["orange"]}},
+  {"n": "カミカゼ", "en": "Kamikaze", "base": "vodka", "str": 2, "taste": ["fresh"], "flavor": ["citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#eef2dc", "r": [["ウォッカ", "30ml"], ["ホワイト・キュラソー", "15ml"], ["ライムジュース", "15ml"]], "how": "シェーク", "talk": "ウォッカとライムのキレのある、すっきり辛口の一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "全てから解放されたい貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["lime"]}},
+  {"n": "バラライカ", "en": "Balalaika", "base": "vodka", "str": 2, "taste": ["fresh"], "flavor": ["citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#f6f2c8", "r": [["ウォッカ", "30ml"], ["ホワイト・キュラソー", "15ml"], ["レモンジュース", "15ml"]], "how": "シェーク", "talk": "ウォッカにレモンの酸味を合わせた、すっきりした一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "石橋は叩いて渡る慎重な貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["lemon"]}},
+  {"n": "スーパーカミカゼ", "en": "Super Kamikaze", "base": "vodka", "str": 3, "taste": ["fresh"], "flavor": ["citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#eef2dc", "r": [["スピリタス（ウォッカ）", "適量"], ["ホワイト・キュラソー", "適量"], ["ライムジュース", "適量"]], "how": "シェーク", "talk": "スピリタスをベースにした、とても強いカクテルです。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "人生を諦めた貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["lime"]}},
+  {"n": "ホワイトレディ", "en": "White Lady", "base": "gin", "str": 2, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#f4f2e8", "r": [["ジン", "30ml"], ["ホワイト・キュラソー", "15ml"], ["レモンジュース", "15ml"]], "how": "シェーク", "talk": "ジンの香りとレモンの酸味が調和した、すっきり上品な一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "純粋な心をもっていると思っている貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["lemon"]}},
+  {"n": "ギムレット", "en": "Gimlet", "base": "gin", "str": 2, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#e6f0d0", "r": [["ジン", "45ml"], ["ライムジュース", "15ml"]], "how": "シェーク", "talk": "ジンにライムを合わせた、キレのよい辛口の一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "想いたい人がいる貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["lime"]}},
+  {"n": "ブルームーン", "en": "Blue Moon", "base": "gin", "str": 2, "taste": ["sweet", "fresh"], "flavor": ["fruit"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#c9b8e0", "r": [["ジン", "30ml"], ["バイオレット・リキュール", "15ml"], ["レモンジュース", "15ml"]], "how": "シェーク", "talk": "スミレの香りが漂う、淡い紫色の上品な一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "完全な愛を求める貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {}},
+  {"n": "ブルーハワイ", "en": "Blue Hawaii", "base": "rum", "str": 2, "taste": ["sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#4cc4e8", "r": [["ホワイト・ラム", "30ml"], ["ブルー・キュラソー", "15ml"], ["パイナップルジュース", "45ml"], ["ココナッツリキュール", "15ml"]], "how": "シェーク", "talk": "鮮やかな青色の、南国リゾートを思わせる甘い一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "旅行の計画を立てたい貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["cherry"]}},
+  {"n": "XYZ", "en": "XYZ", "base": "rum", "str": 2, "taste": ["fresh"], "flavor": ["fruit"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#f6f2c8", "r": [["ホワイト・ラム", "30ml"], ["ホワイト・キュラソー", "15ml"], ["レモンジュース", "15ml"]], "how": "シェーク", "talk": "「これ以上はない」という意味の名前を持つ、すっきりした一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "今日という日を最高な気分で終えたい貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {}},
+  {"n": "マルガリータ", "en": "Margarita", "base": "tequila", "str": 2, "taste": ["fresh"], "flavor": ["citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#eef2dc", "r": [["テキーラ", "30ml"], ["ホワイト・キュラソー", "15ml"], ["ライムジュース", "15ml"], ["塩", "グラスの縁に"]], "how": "シェーク", "talk": "グラスの縁の塩とライムの酸味が、テキーラによく合う一杯です。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "新しい恋愛をしたい貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {"g": ["salt", "lime"]}},
+  {"n": "マタドール", "en": "Matador", "base": "tequila", "str": 2, "taste": ["fresh", "sweet"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["after", "last"], "glass": "cocktail", "color": "#f2eaa0", "r": [["テキーラ", "30ml"], ["パイナップルジュース", "60ml"], ["ライムジュース", "15ml"]], "how": "シェーク", "talk": "パイナップルの甘みとライムの酸味が、テキーラを飲みやすくしてくれます。カクテルが冷えている内に2、3口で飲んで頂くと美味しく飲めます。", "fun": "明日を生きたい貴方へ。", "menu": true, "priceText": "¥1,350〜", "deco": {}},
+  /* 酎ハイ・焼酎・モクテル（当店メニュー） */
+  {"n": "レモン酎ハイ", "en": "Lemon Chuhai", "base": "chuhai", "str": 1, "taste": ["fresh"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2eeb0", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["レモン", "適量"]], "how": "ビルド", "talk": "すっきりレモン味の、居酒屋の定番です。", "fun": "ひと口目の「くぅ〜」が、いちばんおいしい一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "ライム酎ハイ", "en": "Lime Chuhai", "base": "chuhai", "str": 1, "taste": ["fresh"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e4f0cc", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["ライム", "適量"]], "how": "ビルド", "talk": "ライムの酸味がきいた、さっぱりした一杯です。", "fun": "ライムの香りで、気分までさっぱりします。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "ピーチ酎ハイ", "en": "Peach Chuhai", "base": "chuhai", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f6d0b8", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["ピーチ", "適量"]], "how": "ビルド", "talk": "桃の甘い香りの、飲みやすい一杯です。", "fun": "桃の甘さが、うっかり飲みすぎを誘う危険な一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "カルピス酎ハイ", "en": "Calpis Chuhai", "base": "chuhai", "str": 1, "taste": ["sweet"], "flavor": ["cream", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f4f0e6", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["カルピス", "適量"]], "how": "ビルド", "talk": "カルピスのやさしい甘さが、焼酎をまろやかにします。", "fun": "なつかしい味なのに、ちゃんとお酒です。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "カシス酎ハイ", "en": "Cassis Chuhai", "base": "chuhai", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#a0507a", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["カシス", "適量"]], "how": "ビルド", "talk": "カシスの甘酸っぱさが楽しめる、飲みやすい一杯です。", "fun": "赤紫の見た目が映える、甘酸っぱい一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "ぶどう酎ハイ", "en": "Grape Chuhai", "base": "chuhai", "str": 1, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#a67ab8", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["ぶどう", "適量"]], "how": "ビルド", "talk": "ぶどうの甘い香りの、飲みやすい一杯です。", "fun": "ぶどうジュースの顔をして、れっきとしたお酒です。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "麦焼酎 いいちこ", "en": "Mugi Shochu Iichiko", "base": "shochu", "str": 1, "taste": ["fresh"], "flavor": ["herb"], "fizz": false, "scene": ["meal", "last"], "glass": "highball", "color": "#e8d8a0", "r": [["焼酎", "適量"], ["割り方：ロック・ソーダ・水・緑茶・ウーロン茶・ジャスミン茶", "お好みで"]], "how": "ロック・水割りほか", "talk": "麦の香ばしさがあり、クセが少なくすっきり飲める焼酎です。", "fun": "居酒屋でおなじみの、頼れる定番です。", "menu": true, "priceText": "¥750", "deco": {}},
+  {"n": "麦焼酎 二階堂", "en": "Mugi Shochu Nikaido", "base": "shochu", "str": 1, "taste": ["fresh"], "flavor": ["herb"], "fizz": false, "scene": ["meal", "last"], "glass": "highball", "color": "#e8d8a0", "r": [["焼酎", "適量"], ["割り方：ロック・ソーダ・水・緑茶・ウーロン茶・ジャスミン茶", "お好みで"]], "how": "ロック・水割りほか", "talk": "麦の香ばしさがあり、すっきり飲みやすい焼酎です。", "fun": "食事のお供に、さらりと寄り添う一杯です。", "menu": true, "priceText": "¥750", "deco": {}},
+  {"n": "芋焼酎 黒霧島", "en": "Imo Shochu Kuro Kirishima", "base": "shochu", "str": 1, "taste": ["rich", "sweet"], "flavor": ["fruit"], "fizz": false, "scene": ["meal", "last"], "glass": "highball", "color": "#d8b870", "r": [["焼酎", "適量"], ["割り方：ロック・ソーダ・水・緑茶・ウーロン茶・ジャスミン茶", "お好みで"]], "how": "ロック・水割りほか", "talk": "芋のまろやかな甘みとコクが楽しめる焼酎です。", "fun": "芋焼酎デビューにぴったりの、人気の一本です。", "menu": true, "priceText": "¥750", "deco": {}},
+  {"n": "芋焼酎 だいやめ", "en": "Imo Shochu Daiyame", "base": "shochu", "str": 1, "taste": ["sweet", "rich"], "flavor": ["fruit"], "fizz": false, "scene": ["meal", "last"], "glass": "highball", "color": "#d8b870", "r": [["焼酎", "適量"], ["割り方：ロック・ソーダ・水・緑茶・ウーロン茶・ジャスミン茶", "お好みで"]], "how": "ロック・水割りほか", "talk": "芋のふくよかな甘みが楽しめる焼酎です。", "fun": "名前のとおり、疲れが「だいやめ」される気分になれます。", "menu": true, "priceText": "¥800", "deco": {}},
+  {"n": "ジャスミン焼酎 茉莉花", "en": "Jasmine Shochu Molika", "base": "shochu", "str": 1, "taste": ["fresh"], "flavor": ["herb"], "fizz": false, "scene": ["meal", "last"], "glass": "highball", "color": "#f4f2e8", "r": [["焼酎", "適量"], ["割り方：ロック・ソーダ・水・緑茶・ウーロン茶・ジャスミン茶", "お好みで"]], "how": "ロック・水割りほか", "talk": "ジャスミンの花の香りがふわりと漂う、すっきりした焼酎です。", "fun": "花の香りで、気分がふわっと華やぎます。", "menu": true, "priceText": "¥750", "deco": {}},
+  {"n": "ファジーネーブル（ノンアル）", "en": "Mock Peach Orange", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6ab4b", "r": [["ピーチ（ノンアルコール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "ピーチ（ノンアル）をオレンジジュースで割った、甘く飲みやすい一杯です。お酒は入っていません。", "fun": "ノンアルでも、桃の香りが愛嬌を振りまくモテ系の味わいです。", "menu": true, "priceText": "¥750", "deco": {"g": ["orange"]}},
+  {"n": "ピーチウーロン（ノンアル）", "en": "Mock Peach Oolong", "base": "none", "str": 0, "taste": ["fresh", "sweet"], "flavor": ["fruit", "herb"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#a7744b", "r": [["ピーチ（ノンアルコール）", "45ml"], ["ウーロン茶", "適量"]], "how": "ビルド", "talk": "ピーチ（ノンアル）をウーロン茶で割った、甘さがすっきりする一杯です。お酒は入っていません。", "fun": "ノンアルでも、桃の香りが愛嬌を振りまくモテ系の味わいです。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "ピーチミルク（ノンアル）", "en": "Mock Peach Milk", "base": "none", "str": 0, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#f5e0d1", "r": [["ピーチ（ノンアルコール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "ピーチ（ノンアル）を牛乳で割った、まろやかな一杯です。お酒は入っていません。", "fun": "ノンアルでも、桃の香りが愛嬌を振りまくモテ系の味わいです。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "ピーチバック（ノンアル）", "en": "Mock Peach Buck", "base": "none", "str": 0, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e9be72", "r": [["ピーチ（ノンアルコール）", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "ピーチ（ノンアル）を甘いジンジャーエールで割った、飲みやすい一杯です。お酒は入っていません。", "fun": "ノンアルでも、桃の香りが愛嬌を振りまくモテ系の味わいです。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "ピーチトニック（ノンアル）", "en": "Mock Peach Tonic", "base": "none", "str": 0, "taste": ["fresh", "bitter"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2e2d5", "r": [["ピーチ（ノンアルコール）", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "ピーチ（ノンアル）をトニックウォーターで割った、ほろ苦くさっぱりした一杯です。お酒は入っていません。", "fun": "ノンアルでも、桃の香りが愛嬌を振りまくモテ系の味わいです。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "ピーチコーク（ノンアル）", "en": "Mock Peach Cola", "base": "none", "str": 0, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#794d3e", "r": [["ピーチ（ノンアルコール）", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "ピーチ（ノンアル）をコーラで割った、気軽に飲める一杯です。お酒は入っていません。", "fun": "ノンアルでも、桃の香りが愛嬌を振りまくモテ系の味わいです。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "カシスオレンジ（ノンアル）", "en": "Mock Cassis Orange", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#d9883b", "r": [["カシス（ノンアルコール）", "45ml"], ["オレンジジュース", "適量"]], "how": "ビルド", "talk": "カシス（ノンアル）をオレンジジュースで割った、甘く飲みやすい一杯です。お酒は入っていません。", "fun": "ノンアルでも、甘酸っぱさと赤紫色の見た目は本格派です。", "menu": true, "priceText": "¥750", "deco": {"g": ["orange"]}},
+  {"n": "カシスウーロン（ノンアル）", "en": "Mock Cassis Oolong", "base": "none", "str": 0, "taste": ["fresh", "sweet"], "flavor": ["fruit", "herb"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#8a513b", "r": [["カシス（ノンアルコール）", "45ml"], ["ウーロン茶", "適量"]], "how": "ビルド", "talk": "カシス（ノンアル）をウーロン茶で割った、甘さがすっきりする一杯です。お酒は入っていません。", "fun": "ノンアルでも、甘酸っぱさと赤紫色の見た目は本格派です。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "カシスミルク（ノンアル）", "en": "Mock Cassis Milk", "base": "none", "str": 0, "taste": ["sweet", "rich"], "flavor": ["fruit", "cream"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "highball", "color": "#d8bdc1", "r": [["カシス（ノンアルコール）", "45ml"], ["牛乳", "90ml"]], "how": "ビルド", "talk": "カシス（ノンアル）を牛乳で割った、まろやかな一杯です。お酒は入っていません。", "fun": "ノンアルでも、甘酸っぱさと赤紫色の見た目は本格派です。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "カシスバック（ノンアル）", "en": "Mock Cassis Buck", "base": "none", "str": 0, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#cc9a62", "r": [["カシス（ノンアルコール）", "45ml"], ["甘いジンジャーエール", "適量"]], "how": "ビルド", "talk": "カシス（ノンアル）を甘いジンジャーエールで割った、飲みやすい一杯です。お酒は入っていません。", "fun": "ノンアルでも、甘酸っぱさと赤紫色の見た目は本格派です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "カシストニック（ノンアル）", "en": "Mock Cassis Tonic", "base": "none", "str": 0, "taste": ["fresh", "bitter"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d5bec5", "r": [["カシス（ノンアルコール）", "45ml"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "カシス（ノンアル）をトニックウォーターで割った、ほろ苦くさっぱりした一杯です。お酒は入っていません。", "fun": "ノンアルでも、甘酸っぱさと赤紫色の見た目は本格派です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "カシスコーク（ノンアル）", "en": "Mock Cassis Cola", "base": "none", "str": 0, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#5c2a2e", "r": [["カシス（ノンアルコール）", "45ml"], ["コーラ", "適量"]], "how": "ビルド", "talk": "カシス（ノンアル）をコーラで割った、気軽に飲める一杯です。お酒は入っていません。", "fun": "ノンアルでも、甘酸っぱさと赤紫色の見た目は本格派です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "キューピット", "en": "Cupid", "base": "none", "str": 0, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#b8a890", "r": [["カルピス", "適量"], ["コーラ", "適量"]], "how": "ビルド", "talk": "カルピスとコーラを合わせた、甘くて飲みやすい一杯です。お酒は入っていません。", "fun": "カルピスとコーラの意外な名コンビ。恋が実りそうな名前です。", "menu": true, "priceText": "¥750", "deco": {"straw": 1}},
+  {"n": "シャーリーテンプル", "en": "Shirley Temple", "base": "none", "str": 0, "taste": ["sweet"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d0505a", "r": [["ザクロシロップ（グレナデン）", "適量"], ["ジンジャーエール", "適量"]], "how": "ビルド", "talk": "ザクロの甘酸っぱさを、甘いジンジャーエールで割った一杯です。お酒は入っていません。", "fun": "子役スターにちなんだ、甘くて元気な一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["cherry"], "straw": 1, "layer": "#c4243a"}},
+  {"n": "サラトガクーラー", "en": "Saratoga Cooler", "base": "none", "str": 0, "taste": ["fresh", "sweet"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#d8ecb8", "r": [["ライム", "適量"], ["ジンジャーエール", "適量"]], "how": "ビルド", "talk": "ライムの酸味を、甘いジンジャーエールで割った、さっぱりした一杯です。お酒は入っていません。", "fun": "暑い日の味方で、体感温度が2度くらい下がる気がします。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "レモネード", "en": "Lemonade", "base": "none", "str": 0, "taste": ["fresh"], "flavor": ["citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#f6ee9a", "r": [["レモン", "適量"], ["シュガー・シロップ", "適量"], ["水またはソーダ", "適量"]], "how": "ビルド", "talk": "レモンの酸味と甘みのバランスがよい、さっぱりした一杯です。お酒は入っていません。", "fun": "説明不要の、レモンの安心感です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "レモントニック", "en": "Lemon Tonic", "base": "none", "str": 0, "taste": ["fresh", "bitter"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2f0b8", "r": [["レモン", "適量"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "レモンをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。お酒は入っていません。", "fun": "大人っぽい苦味で、ノンアルでも「飲んだ感」があります。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "レモンコーク", "en": "Lemon Cola", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#6a4a20", "r": [["レモン", "適量"], ["コーラ", "適量"]], "how": "ビルド", "talk": "コーラにレモンを搾った、気軽に飲める一杯です。お酒は入っていません。", "fun": "コーラが、ちょっとだけ上品になります。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "ライムネード", "en": "Limeade", "base": "none", "str": 0, "taste": ["fresh"], "flavor": ["citrus"], "fizz": false, "scene": ["first", "meal"], "glass": "highball", "color": "#e4f0b8", "r": [["ライム", "適量"], ["シュガー・シロップ", "適量"], ["水またはソーダ", "適量"]], "how": "ビルド", "talk": "ライムの爽やかな酸味が楽しめる、さっぱりした一杯です。お酒は入っていません。", "fun": "ライムの香りで、気分がリセットされます。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "ライムトニック", "en": "Lime Tonic", "base": "none", "str": 0, "taste": ["fresh", "bitter"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e8f2c8", "r": [["ライム", "適量"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "ライムをトニックウォーターで割った、ほろ苦くさっぱりした一杯です。お酒は入っていません。", "fun": "ジントニック気分を、ノンアルで楽しめます。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "ライムコーク", "en": "Lime Cola", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#6a5a28", "r": [["ライム", "適量"], ["コーラ", "適量"]], "how": "ビルド", "talk": "コーラにライムを搾った、気軽に飲める一杯です。お酒は入っていません。", "fun": "ライム1つで、コーラが急に大人になります。", "menu": true, "priceText": "¥750", "deco": {"g": ["lime"]}},
+  {"n": "シンデレラ", "en": "Cinderella", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "cocktail", "color": "#f8c04a", "r": [["オレンジジュース", "適量"], ["パイナップルジュース", "適量"], ["レモンジュース", "適量"]], "how": "シェーク", "talk": "3種類のフルーツジュースを合わせた、甘酸っぱく飲みやすい一杯です。お酒は入っていません。", "fun": "12時の鐘は鳴りませんが、おいしくて飲み干すのはあっという間です。", "menu": true, "priceText": "¥950", "deco": {"g": ["cherry", "orange"]}},
+  {"n": "サマーデライト", "en": "Summer Delight", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "cocktail", "color": "#f6b86a", "r": [["フルーツジュース", "適量（店主おまかせ）"]], "how": "シェーク", "talk": "夏らしい爽やかなフルーツの香りを楽しめる、シェイクカクテルです。お酒は入っていません。", "fun": "名前のとおり、気分だけでも夏にしてくれます。", "menu": true, "priceText": "¥950", "deco": {"g": ["orange"]}},
+  {"n": "オレンジフラワークーラー", "en": "Orange Flower Cooler", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["fruit", "citrus"], "fizz": false, "scene": ["meal", "after", "last"], "glass": "cocktail", "color": "#f8b04a", "r": [["オレンジジュース", "適量"], ["その他", "適量（店主おまかせ）"]], "how": "シェーク", "talk": "オレンジの爽やかな甘さが楽しめる、シェイクカクテルです。お酒は入っていません。", "fun": "オレンジの香りで、見た目も味も華やかな一杯です。", "menu": true, "priceText": "¥950", "deco": {"g": ["orange"]}},
+  {"n": "ヴァージンモヒート", "en": "Virgin Mojito", "base": "none", "str": 0, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e4f0cc", "r": [["ミントの葉", "たっぷり"], ["ライム", "1/2個"], ["シュガー・シロップ", "10ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ミントとライムをつぶして、ソーダで仕上げた、爽やかな一杯です。お酒は入っていません。", "fun": "お酒は入っていませんが、ミントの清涼感は本物です。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
+  {"n": "ピーチモヒート", "en": "Peach Mojito", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["herb", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2d8bc", "r": [["ミントの葉", "たっぷり"], ["ピーチ（ノンアルコール）", "適量"], ["ライム", "1/2個"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ミントの爽やかさと桃の甘さが合わさった一杯です。お酒は入っていません。", "fun": "ミントと桃の、意外とよく合う組み合わせです。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
+  {"n": "カシスモヒート", "en": "Cassis Mojito", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["herb", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#a86a94", "r": [["ミントの葉", "たっぷり"], ["カシス（ノンアルコール）", "適量"], ["ライム", "1/2個"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ミントの爽やかさとカシスの甘酸っぱさが合わさった一杯です。お酒は入っていません。", "fun": "赤紫の中にミントの緑が映える、写真映えする一杯です。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
+  {"n": "巨乳", "en": "Kyonyu (Original Chuhai)", "base": "chuhai", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal", "talk"], "glass": "highball", "color": "#e8a0b8", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["店主おまかせ", "適量"]], "how": "ビルド", "talk": "当店オリジナル酎ハイ。お客様との間で生まれた伝説的酎ハイです。", "fun": "名前だけで話題になる、当店の伝説の一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}}
 ];
 
 /* カクテルの scene（first/meal/after/last）を、気分タグに変換（味・強さ・炭酸などから自動で補う） */
@@ -469,10 +550,8 @@ const FUN = {
   'ホワイト・レディ': '見た目は清楚ですが、中身はなかなかキレのある大人の女性です。',
   'ギムレット': '「ギムレットには早すぎる」と、いつか言ってみたくなる一杯です。',
   'コスモポリタン': 'ピンク色の見た目で、写真映えの勝者になれます。',
-  'サイドカー': '名前の由来はバイクの側車。一人で乗っても、ちゃんと楽しい一杯です。',
   'ウイスキー・サワー': 'ウイスキー嫌いを自称していた人が、ここで改心するのをよく見かけます。',
   'エスプレッソ・マティーニ': '眠気覚ましのような顔をして、実はお酒です。夜更かしの覚悟をどうぞ。',
-  'アレキサンダー': 'デザートのような顔をしていますが、これでもれっきとしたお酒です。',
   'ネグローニ': '同じ量を3つ混ぜるだけで、通ぶれる魔法の一杯になります。',
   'マティーニ': '注文の仕方にこだわり始めると、急に大人の気分になれます。',
   'マンハッタン': 'ニューヨークの夜景を思い浮かべて飲むと、2割増しで格好よく見えます。',
@@ -544,9 +623,9 @@ const DECOR = {
   'テキーラ・サンライズ': { top: '#f7b84a', layer: '#d3281c', g: ['orange'], straw: 1 },
   'パロマ': { g: ['salt', 'lime'] }, 'カンパリ・ソーダ': { g: ['orange'] }, 'スプモーニ': { g: ['lime'] },
   'ハイボール': { g: ['peel'] }, 'ダイキリ': { g: ['lime'] }, 'マルガリータ': { g: ['salt', 'lime'] },
-  'ギムレット': { g: ['lime'] }, 'コスモポリタン': { g: ['peel'] }, 'サイドカー': { g: ['peel'] },
+  'ギムレット': { g: ['lime'] }, 'コスモポリタン': { g: ['peel'] },
   'ウイスキー・サワー': { g: ['cherry', 'orange'], foam: 1 }, 'エスプレッソ・マティーニ': { foam: 1, g: ['beans'] },
-  'アレキサンダー': { g: ['nutmeg'] }, 'ネグローニ': { g: ['orange'] }, 'マティーニ': { g: ['olive'] },
+  'ネグローニ': { g: ['orange'] }, 'マティーニ': { g: ['olive'] },
   'マンハッタン': { g: ['cherry'] }, 'オールド・ファッションド': { g: ['peel', 'cherry'] },
   'バージン・モヒート': { g: ['mint', 'lime'] }, 'シンデレラ': { g: ['cherry', 'orange'] },
   'シャーリー・テンプル': { g: ['cherry'], layer: '#c4243a', straw: 1 },
@@ -594,7 +673,7 @@ const peelSvg = (x, y) => `<path d="M${x} ${y} q9 -4 5 -10 q-6 -6 -11 0 q-3 5 3 
 const beansSvg = (x, y) => [[-9, 1, -20], [0, -1, 15], [9, 1, 35]].map(([dx, dy, a]) => `<g transform="rotate(${a} ${x + dx} ${y + dy})"><ellipse cx="${x + dx}" cy="${y + dy}" rx="4.4" ry="2.9" fill="#3b2218"/><path d="M${x + dx - 3.6} ${y + dy} Q${x + dx} ${y + dy - 1.4} ${x + dx + 3.6} ${y + dy}" stroke="#150a06" stroke-width=".8" fill="none"/></g>`).join('');
 
 function glassSvg(c) {
-  const id = ++_gid, D = DECOR[c.n] || {}, g = GLASS_SHAPES[c.glass], gar = D.g || [], col = c.color;
+  const id = ++_gid, D = c.deco || DECOR[c.n] || {}, g = GLASS_SHAPES[c.glass], gar = D.g || [], col = c.color;
   const top = D.top || col, bot = D.layer || mix(col, '#000000', .16);
   const ice = D.ice !== undefined ? D.ice : (c.glass === 'highball' || c.glass === 'rocks' || c.glass === 'mug');
   const defs = `<defs><linearGradient id="lg${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset=".3" stop-color="${top}"/><stop offset="1" stop-color="${bot}"/></linearGradient>
@@ -648,7 +727,7 @@ function glassSvg(c) {
    ========================================================= */
 const TASTE = { fresh: 'さっぱり', sweet: '甘め', bitter: 'ほろ苦い', rich: 'どっしり' };
 const STR = ['ノンアル', '弱め', 'ふつう', '強め'];
-const BASE = { gin: 'ジン', vodka: 'ウォッカ', rum: 'ラム', tequila: 'テキーラ', whisky: 'ウイスキー', brandy: 'ブランデー', liqueur: 'リキュール', none: 'ノンアル' };
+const BASE = { gin: 'ジン', vodka: 'ウォッカ', rum: 'ラム', tequila: 'テキーラ', whisky: 'ウイスキー', beer: 'ビール', wine: 'ワイン', shochu: '焼酎', chuhai: '酎ハイ', liqueur: 'リキュール', none: 'ノンアル' };
 const FLAVOR = { citrus: '柑橘', fruit: '果実', herb: 'ハーブ', cream: 'コーヒー・クリーム', bitter: 'ビター' };
 const SCENE = { talk: '会話を楽しむ', quick: 'グイグイ', lively: '盛り上がる', slow: 'じっくり味わう', chill: 'まったり' };
 const GLASS = { highball: 'タンブラー', rocks: 'ロックグラス', cocktail: 'カクテルグラス', coupe: 'クープグラス', mug: '銅のマグ' };
@@ -661,7 +740,7 @@ function score(c, a) {
   const d = Math.abs(c.str - a.strength);
   if (d === 0) { s += 3; hits.push(STR[c.str]); } else if (d === 1) s += 1; else s -= 3;
   // ベース
-  if (a.base && a.base !== 'any') { max += 3; if (c.base === a.base) { s += 3; hits.push(BASE[c.base]); } }
+  if (a.base && a.base !== 'any') { max += 6; if (c.base === a.base) { s += 6; hits.push(BASE[c.base]); } } if (c.n === '巨乳' && a.base === 'chuhai') s += 12; // 当店オリジナルの酎ハイは、酎ハイを選んだ方の1番目に // 選んだお酒は、強く優先する
   // 味
   max += 3; if (c.taste.includes(a.taste)) { s += c.taste[0] === a.taste ? 3 : 2; hits.push(TASTE[a.taste]); }
   // 風味
@@ -674,8 +753,10 @@ function score(c, a) {
   return { c, s, pct: Math.min(100, Math.max(0, Math.round(s / max * 100))), hits };
 }
 function recommend(a) {
-  const pool = COCKTAILS.filter(c => a.strength === 0 ? c.str === 0 : c.str > 0);
-  return pool.map(c => score(c, a)).sort((x, y) => y.s - x.s).slice(0, 3);
+  // 1番目・2番目：当店のメニュー／3番目：メニューにない、おすすめの提案
+  const sc = COCKTAILS.filter(c => a.strength === 0 ? c.str === 0 : c.str > 0).map(c => score(c, a)).sort((x, y) => y.s - x.s);
+  const menu = sc.filter(r => r.c.menu), off = sc.filter(r => !r.c.menu);
+  return [...menu.slice(0, 2), ...off.slice(0, 1)];
 }
 
 /* =========================================================
@@ -844,7 +925,7 @@ const TYPES = {
    aroma: 香りのタイプ（先頭ほど強い）　easy: 飲みやすさ(3=初心者向き)
    styles: 飲み方ごとのおすすめ度(0〜3)　premium: ちょっと特別な一本
    ========================================================= */
-const CAT = { jp: 'ジャパニーズ', sc: 'スコッチ', us: 'バーボン・アメリカン' };
+const CAT = { jp: 'ジャパニーズ', sc: 'スコッチ', islay: 'アイラ', us: 'バーボン・アメリカン' };
 const STYLE = { hi: 'ハイボール（ソーダ割り）', mizu: '水割り', rock: 'ロック', straight: 'ストレート' };
 const STYLE_S = { hi: 'ハイボール', mizu: '水割り', rock: 'ロック', straight: 'ストレート' };
 const AROMA = { fruit: 'フルーティ', vanilla: 'バニラ・キャラメル', herb: '若葉・ハーブ', smoke: 'スモーキー', spice: 'スパイス・コク' };
@@ -898,8 +979,46 @@ const WHISKIES = [
     talk: 'トウモロコシ由来の甘みとバニラの香りがあり、軽くて飲みやすい一本です。ハイボールで、気軽にどうぞ。' },
   { n: 'ワイルドターキー', en: 'Wild Turkey', cat: 'us', body: 3, sweet: 2, smoke: 0, aroma: ['spice', 'vanilla'], easy: 1, styles: { hi: 2, mizu: 1, rock: 3, straight: 3 }, shape: 'round', liquid: '#b5601c', label: '#e9d9b8', cap: '#6a2a1a',
     fun: '名前のとおり野性味たっぷり。ガツンと飲みたい夜の相棒です。',
-    talk: 'バニラやキャラメルの甘さに、スパイスの力強さが加わる、パンチのあるバーボンです。ロックやストレートで、味わいを楽しんでください。' }
+    talk: 'バニラやキャラメルの甘さに、スパイスの力強さが加わる、パンチのあるバーボンです。ロックやストレートで、味わいを楽しんでください。' },
+  { n: 'ニッカ フロンティア', en: 'Nikka Frontier', cat: 'jp', body: 3, sweet: 2, smoke: 2, aroma: ['smoke', 'fruit', 'vanilla'], easy: 2, styles: { hi: 3, mizu: 2, rock: 3, straight: 2 }, shape: 'square', liquid: '#c8802a', label: '#f0d8b8', cap: '#2a1c12',
+    fun: 'ハイボールの上にそっと注ぐ「フロート」で、見た目からおしゃれに決まります。',
+    talk: '余市モルトを使った、スモーキーで香り高いブレンデッド。熟した果実の甘さを、ピートのほろ苦さが引き締めます。ハイボールやロックがおすすめです。' },
+  { n: '響 ブレンダーズチョイス', en: "Hibiki Blender's Choice", cat: 'jp', body: 2, sweet: 3, smoke: 0, aroma: ['fruit', 'spice', 'vanilla'], easy: 2, premium: true, styles: { hi: 2, mizu: 2, rock: 3, straight: 3 }, shape: 'square', liquid: '#c98a30', label: '#efe6d0', cap: '#8a6a2a',
+    fun: '迷ったら、ブレンダーの目利きにおまかせしたくなる一杯です。',
+    talk: '複数の原酒を調和させた、華やかでなめらかな味わい。ストレートかロックで、香りの重なりをゆっくり楽しんでください。' },
+  { n: '響 ジャパニーズハーモニー', en: 'Hibiki Japanese Harmony', cat: 'jp', body: 2, sweet: 3, smoke: 0, aroma: ['vanilla', 'fruit', 'spice'], easy: 2, premium: true, styles: { hi: 2, mizu: 2, rock: 3, straight: 3 }, shape: 'square', liquid: '#d09a38', label: '#f2ead6', cap: '#8a6a2a',
+    fun: '名前のとおり、ひと口で「調和」という言葉の意味がわかる一杯です。',
+    talk: 'はちみつやオレンジピールを思わせる華やかな香りと、まろやかな口当たり。ロックやストレートがおすすめです。' },
+  { n: 'バランタイン ファインネスト', en: "Ballantine's Finest", cat: 'sc', body: 1, sweet: 2, smoke: 0, aroma: ['fruit', 'herb'], easy: 3, styles: { hi: 3, mizu: 3, rock: 2, straight: 1 }, shape: 'round', liquid: '#d9a640', label: '#e8ecd8', cap: '#2a2a2a',
+    fun: 'すっきり上品で、肩の力が抜ける一杯です。',
+    talk: 'フローラルな香りと、りんごやはちみつのようなやさしい甘さ。軽やかで飲みやすく、ハイボールや水割りに向いています。' },
+  { n: 'アードベッグ10年', en: 'Ardbeg 10', cat: 'islay', body: 3, sweet: 1, smoke: 3, aroma: ['smoke', 'spice'], easy: 1, styles: { hi: 2, mizu: 2, rock: 2, straight: 3 }, shape: 'round', liquid: '#d8b050', label: '#1f3a2e', cap: '#1a1a1a',
+    fun: '好きな人は「これしかない」、苦手な人は「煙っ！」。評価が割れるのも個性です。',
+    talk: '強烈なピートのスモーキーさに、レモンのような爽やかさとダークチョコのような苦味が重なります。スモーキーなウイスキーに挑戦したい方に。' },
+  { n: 'ラフロイグ10年', en: 'Laphroaig 10', cat: 'islay', body: 3, sweet: 1, smoke: 3, aroma: ['smoke', 'spice'], easy: 1, styles: { hi: 2, mizu: 2, rock: 2, straight: 3 }, shape: 'round', liquid: '#c8a040', label: '#e8f0e4', cap: '#1f4a3a',
+    fun: '潮風と薬箱の香りがする、通好みのアイラモルトです。ハマると抜け出せません。',
+    talk: '海藻やヨードを思わせる個性的な香りと、力強いスモーキーさ。ほのかな甘みもあります。ストレートか、少し加水してどうぞ。' },
+  { n: 'IWハーパー ゴールドメダル', en: 'I.W. Harper Gold Medal', cat: 'us', body: 2, sweet: 3, smoke: 0, aroma: ['vanilla', 'fruit'], easy: 3, styles: { hi: 3, mizu: 2, rock: 3, straight: 2 }, shape: 'square', liquid: '#b8601e', label: '#efe0c0', cap: '#8a1a1a',
+    fun: '口当たりがやさしいので、バーボンの入り口にちょうどいい一本です。',
+    talk: 'バニラやキャラメルの甘さと、なめらかな口当たり。ロックやソーダ割りで飲みやすいバーボンです。' }
 ];
+
+/* 価格表（ストレート・ロック・水割りの値段）。limited: 限定品
+   ソーダ割り・コーラ割り・ジンジャーエール割り・トニックウォーター割りは、+MIXER_UP 円 */
+const MIXER_UP = 100;
+const PRICE = {
+  '來人オリジナル': [650], '角瓶': [650], 'ニッカ フロンティア': [650], '知多': [1400, 1], '山崎': [1400, 1], '白州': [1400, 1],
+  '響 ブレンダーズチョイス': [1400, 1], '響 ジャパニーズハーモニー': [1400, 1],
+  'バランタイン ファインネスト': [750], 'ジョニーウォーカー ブラックラベル': [900], 'シーバスリーガル12年': [1000], 'シーバスリーガル12年 ミズナラ': [1000],
+  'デュワーズ ホワイト・ラベル': [750], 'デュワーズ12年': [850], 'マッカラン シェリーオーク12年': [2100],
+  'アードベッグ10年': [1000], 'ラフロイグ10年': [1000],
+  'ジャックダニエル': [750], 'ジャックダニエル アップル': [750], 'ジャックダニエル ハニー': [750, 1], 'ジムビーム': [750], 'ワイルドターキー': [750], 'IWハーパー ゴールドメダル': [750]
+};
+WHISKIES.forEach(w => { const p = PRICE[w.n]; w.price = p ? p[0] : 0; w.limited = !!(p && p[1]); });
+const HOUSE = '來人オリジナル'; // 診断結果に必ず出す、お店のウイスキー
+const LIMITED_NOTE = '限定品です。在庫限り、なくなり次第終了。入荷未定です。';
+const yen = n => '¥' + n.toLocaleString('en-US');
+
 
 const WH_STEPS = [
   { id: 'level', label: 'ウイスキーの経験', scene: 'まずは、ウイスキーとの付き合いを教えてください。', ask: 'ウイスキーは、普段どのくらい飲みますか？',
@@ -949,6 +1068,7 @@ const WH_STEPS = [
     choices: [
       { t: 'ジャパニーズ', s: '繊細で、なめらか', v: 'jp' },
       { t: 'スコッチ', s: '伝統的で、奥深い', v: 'sc' },
+      { t: 'アイラ', s: '潮と煙の香りが特徴の個性派', v: 'islay' },
       { t: 'バーボン・アメリカン', s: '甘く、力強い', v: 'us' },
       { t: 'こだわらない', v: 'any' }
     ], tips: [] },
@@ -976,9 +1096,9 @@ function whiskyScore(w, a) {
   if (a.avoid === 'alcohol') s -= (3 - w.easy) * 1.5;
   if (a.avoid === 'sweetness') s -= (w.sweet - 1) * 1.5 + (w.flavored ? 2 : 0);
   // 産地
-  if (a.country !== 'any') { if (w.cat === a.country) { s += 3; hits.push(CAT[w.cat]); } else s -= 1; }
+  if (a.country !== 'any') { if (w.cat === a.country || (a.country === 'sc' && w.cat === 'islay')) { s += 3; hits.push(CAT[w.cat]); } else s -= 1; }
   // 特別感
-  if (a.special === 'special') s += w.premium ? 2.5 : 0; else if (a.special === 'regular') s -= w.premium ? 1.5 : 0;
+  const sp = w.premium || w.limited; if (a.special === 'special') s += sp ? 2.5 : 0; else if (a.special === 'regular') s -= sp ? 1.5 : 0;
   return { w, s, pct: Math.max(40, Math.min(99, Math.round(40 + s / 20 * 59))), hits };
 }
 function whiskyStyles(w, a) {
@@ -990,34 +1110,56 @@ function bottleSvg(w) {
   const P = { round: 'M43 16 V38 Q43 47 28 57 V114 Q28 120 34 120 H66 Q72 120 72 114 V57 Q57 47 57 38 V16 Z',
     square: 'M44 14 V34 L30 46 V114 Q30 120 36 120 H64 Q70 120 70 114 V46 L56 34 V14 Z',
     slim: 'M45 14 V50 Q45 57 38 63 V114 Q38 120 44 120 H56 Q62 120 62 114 V63 Q55 57 55 50 V14 Z' }[w.shape];
-  const id = ++_gid, dark = w.label === '#1c1c1c' || w.label === '#111' || w.label === '#1a1a1a' || w.label === '#2a3a1c' || w.label === '#3a2a10';
+  const id = ++_gid, dark = (parseInt(w.label.slice(1, 3), 16) * .3 + parseInt(w.label.slice(3, 5), 16) * .59 + parseInt(w.label.slice(5, 7), 16) * .11) < 90;
   return `<svg viewBox="0 0 100 130" role="img" aria-label="${esc(w.n)}のボトルのイメージ"><defs><clipPath id="bc${id}"><path d="${P}"/></clipPath><linearGradient id="bl${id}" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="${w.liquid}"/><stop offset=".55" stop-color="${w.liquid}"/><stop offset="1" stop-color="${mix(w.liquid, '#000000', .25)}"/></linearGradient></defs>
     <g clip-path="url(#bc${id})"><rect x="0" y="40" width="100" height="90" fill="url(#bl${id})"/><rect x="0" y="14" width="100" height="26" fill="#fff" fill-opacity=".08"/>
     <rect x="20" y="74" width="60" height="32" fill="${w.label}"/><rect x="20" y="74" width="60" height="2.4" fill="#d6aa5e"/><rect x="20" y="103.6" width="60" height="2.4" fill="#d6aa5e"/>
     <rect x="36" y="83" width="28" height="3" rx="1.5" fill="${dark ? '#d6aa5e' : '#3a2a14'}" fill-opacity=".85"/><rect x="40" y="90" width="20" height="2" rx="1" fill="${dark ? '#fff' : '#3a2a14'}" fill-opacity=".5"/><rect x="43" y="95" width="14" height="2" rx="1" fill="${dark ? '#fff' : '#3a2a14'}" fill-opacity=".35"/></g>
     <path d="${P}" fill="none" stroke="var(--glass)" stroke-width="2.4" stroke-linejoin="round"/><rect x="42.5" y="6" width="15" height="9" rx="2" fill="${w.cap}"/><path d="M34 62 V112" stroke="#fff" stroke-opacity=".45" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>`;
 }
+function renderWhiskyMenu() {
+  card.innerHTML = `
+    <span class="stage">ウイスキーメニュー</span>
+    <h2 class="ask">取り扱いウイスキーと価格</h2>
+    <p class="small">1杯あたりの価格です。左がストレート・ロック・水割り、右がソーダ割り・コーラ割り・ジンジャーエール割り・トニックウォーター割りです。<br>「限定」の銘柄は、在庫限り、なくなり次第終了です。入荷未定です。<br><b>当店に来たら、まず來人ウイスキーを是非。</b></p>
+    ${Object.keys(CAT).map(k => `<section class="menu-grp"><h3 class="menu-h">${esc(CAT[k])}</h3>${WHISKIES.filter(w => w.cat === k).map(w => `<div class="menu-row"><span class="menu-n">${esc(w.n)}${w.limited ? '<em class="menu-lim">限定</em>' : ''}</span><span class="menu-p">${yen(w.price)}<small>／ ${yen(w.price + MIXER_UP)}</small></span></div>`).join('')}</section>`).join('')}
+    <p class="notice pay"><b>お支払い方法</b><span>現金のみ</span></p>
+    <div class="row">
+      <button class="btn" type="button" id="wm-diag">ウイスキー診断をする</button>
+      <button class="btn ghost" type="button" id="wm-home">最初に戻る</button>
+    </div>`;
+  $('#wm-diag').onclick = () => startMode('whisky');
+  $('#wm-home').onclick = () => { mode = null; answers = {}; idx = 0; render(); toTop(); };
+  toTop();
+}
 function renderWhiskyResult() {
-  const a = answers, res = WHISKIES.map(w => whiskyScore(w, a)).sort((x, y) => y.s - x.s).slice(0, 3);
+  const a = answers, ranked = WHISKIES.map(w => whiskyScore(w, a)).sort((x, y) => y.s - x.s);
+  ranked.forEach((r, i) => { r.rank = i + 1; });
+  // 來人は必ず紹介する：おすすめ3本に入っていれば一番上に、入っていなければ4番目に
+  const rj = ranked.find(r => r.w.n === HOUSE); let res = ranked.slice(0, 3);
+  res = res.includes(rj) ? [rj, ...res.filter(r => r !== rj)] : [...res, rj];
   const chipsW = [{ beginner: 'ウイスキー初心者', casual: 'たまに飲む', fan: 'ウイスキー好き' }[a.level], a.style === 'any' ? '飲み方おまかせ' : STYLE_S[a.style], BODYL[a.body], SWEETL[a.sweet], AROMA[a.aroma] + 'な香り', a.country === 'any' ? '産地こだわらない' : CAT[a.country]].map(t => `<span class="chip">${esc(t)}</span>`).join('');
   card.innerHTML = `
     <span class="stage">診断結果</span>
-    <h2 class="ask">あなたにおすすめのウイスキー3本です</h2>
+    <h2 class="ask">あなたにおすすめのウイスキーです</h2>
     <div class="chips" aria-label="選んだ条件">${chipsW}</div>
-    ${res.map((r, i) => { const w = r.w, st = whiskyStyles(w, a); return `<section class="pick">
+    <p class="notice raijin"><b>当店に来たら、まず來人ウイスキーを是非！</b><br>一杯目は、來人のソーダ割りがおすすめです。</p>
+    ${res.map((r, i) => { const w = r.w, st = whiskyStyles(w, a), house = w.n === HOUSE; if (house) { st.main = 'hi'; st.others = ['mizu', 'rock'].filter(k => w.styles[k] >= 2); } return `<section class="pick${house ? ' house' : ''}">
         <div class="art">${bottleSvg(w)}</div>
         <div class="pick-body">
-          <div class="pick-head"><span class="rank">${['いちばんのおすすめ', '2番目の候補', '3番目の候補'][i]}</span><span class="match">相性 ${r.pct}%</span></div>
+          <div class="pick-head"><span class="rank">${house ? 'まずは來人から（当店イチオシ）' : 'あなたへのおすすめ ' + (res.filter(x => x.w.n !== HOUSE).indexOf(r) + 1) + '位'}</span><span class="match">相性 ${r.pct}%</span></div>
           <h3 class="pname">${esc(w.n)}<span>${esc(w.en)}</span></h3>
           <p class="fun">${esc(w.fun)}</p>
-          <div class="chips">${[CAT[w.cat], ...r.hits.filter(h => h !== CAT[w.cat])].map(h => `<span class="chip hit">${esc(h)}</span>`).join('')}</div>
+          <div class="chips">${[...(w.limited ? ['限定'] : []), CAT[w.cat], ...r.hits.filter(h => h !== CAT[w.cat])].map(h => `<span class="chip hit">${esc(h)}</span>`).join('')}</div>
           <p class="meta">おすすめの飲み方：<b>${esc(STYLE[st.main])}</b>${st.others.length ? '　／　ほかに ' + st.others.map(k => STYLE_S[k]).join('・') : ''}</p>
+          <p class="meta">お値段：<b>${yen(w.price + (st.main === 'hi' ? MIXER_UP : 0))}</b>（${st.main === 'hi' ? 'ソーダ割り' : STYLE_S[st.main]}）${st.main === 'hi' ? '' : '　／　ソーダ割りなら ' + yen(w.price + MIXER_UP)}</p>
           <p class="talk">${esc(w.talk)}</p>
+          ${house ? '<p class="small"><b>当店に来たら、まず來人ウイスキーを是非。</b></p>' : ''}${w.limited ? '<p class="small">' + LIMITED_NOTE + '</p>' : ''}
         </div>
       </section>`; }).join('')}
     <p class="notice pay"><b>お支払い方法</b><span>現金のみ</span></p>
     <p class="order">注文するときは、この画面をバーテンダーに見せてください。</p>
-    <p class="small">価格はドリンクメニューをご覧ください。相性は、条件とどれだけ合うかの目安です。味の感じ方には個人差があります。</p>
+    <p class="small">ソーダ割り・コーラ割り・ジンジャーエール割り・トニックウォーター割りは、ストレート・ロック・水割りの価格に＋${yen(MIXER_UP)}です。相性は、条件とどれだけ合うかの目安です。味の感じ方には個人差があります。</p>
     <div class="row">
       <button class="btn" type="button" id="again">最初からやり直す</button>
       <button class="btn ghost" type="button" id="list">取り扱いウイスキーを見る</button>
@@ -1025,9 +1167,50 @@ function renderWhiskyResult() {
       <button class="btn ghost" type="button" id="back">ひとつ前に戻る</button>
     </div>`;
   $('#again').onclick = () => { mode = null; answers = {}; idx = 0; render(); toTop(); };
-  $('#list').onclick = () => showTip({ q: '取り扱いウイスキー', a: Object.keys(CAT).map(k => '【' + CAT[k] + '】\n' + WHISKIES.filter(w => w.cat === k).map(w => w.n).join('\n')).join('\n\n') });
+  $('#list').onclick = renderWhiskyMenu;
   $('#other').onclick = () => startMode('pref');
   $('#back').onclick = () => { idx--; render(); };
+}
+
+/* =========================================================
+   ソフトドリンク（診断とは別に、タップで選べる画面）
+   ========================================================= */
+const SOFT_PRICE = '¥600';
+const SOFT = [
+  { n: 'オレンジジュース', fun: '定番の安心感。ビタミンCは、裏切りません。', m: ['sweet'] },
+  { n: 'パインジュース', fun: '飲むと、気分だけ南の島へ出発できます。', m: ['sweet', 'mild'] },
+  { n: 'グレープフルーツジュース', fun: 'ほろ苦さが好きな、大人の味方です。', m: ['fresh'] },
+  { n: 'ジンジャーエール', fun: '甘くてシュワッと、元気が出る一杯です。', m: ['sweet', 'fresh'] },
+  { n: 'トニックウォーター', fun: 'ほろ苦い、大人のソーダです。', m: ['fresh'] },
+  { n: 'コーラ', fun: '迷ったら、やっぱりコーラです。', m: ['sweet'] },
+  { n: '緑茶', fun: 'ほっと一息つきたい夜に。', m: ['clear', 'mild'] },
+  { n: '烏龍茶', fun: '食事の脂を、さっぱり流してくれます。', m: ['clear'] },
+  { n: 'ジャスミン茶', fun: '花の香りで、気分がリセットされます。', m: ['clear', 'fresh'] },
+  { n: 'ミルク', fun: 'やさしい味で、一日をまろやかに締めます。', m: ['mild'] }
+];
+const SOFT_MOOD = [{ k: 'fresh', t: 'さっぱりしたい' }, { k: 'sweet', t: '甘いものが飲みたい' }, { k: 'clear', t: '食事に合わせて、すっきり' }, { k: 'mild', t: 'まろやかに、ほっとしたい' }];
+function softBanner() {
+  return `<div class="notice raijin"><b>ソフトドリンク（ジュースやお茶）をご希望の方は、こちら</b><br><button class="btn ghost" type="button" id="to-soft">ソフトドリンクを選ぶ</button></div>`;
+}
+function renderSoft(mood) {
+  const pick = mood ? SOFT.filter(s => s.m.includes(mood)) : [];
+  card.innerHTML = `
+    <span class="stage">ソフトドリンク</span>
+    <h2 class="ask">ソフトドリンクを選ぶ</h2>
+    <p class="small">ジュースやお茶など、お酒の入っていない飲み物です。お気軽にどうぞ。</p>
+    <div class="row" role="group" aria-label="今の気分">${SOFT_MOOD.map(m => `<button class="btn ${m.k === mood ? '' : 'ghost'}" type="button" data-mood="${m.k}" aria-pressed="${m.k === mood}">${esc(m.t)}</button>`).join('')}</div>
+    ${mood ? `<section class="menu-grp"><h3 class="menu-h">今の気分に、おすすめ</h3>${pick.map(s => `<div class="menu-row"><span class="menu-n"><b>${esc(s.n)}</b><br><small>${esc(s.fun)}</small></span><span class="menu-p">${SOFT_PRICE}</span></div>`).join('')}</section>` : '<p class="small">気分をタップすると、おすすめが出ます。</p>'}
+    <section class="menu-grp"><h3 class="menu-h">ソフトドリンク一覧（すべて ${SOFT_PRICE}）</h3>${SOFT.map(s => `<div class="menu-row"><span class="menu-n">${esc(s.n)}</span><span class="menu-p">${SOFT_PRICE}</span></div>`).join('')}</section>
+    <p class="notice pay"><b>お支払い方法</b><span>現金のみ</span></p>
+    <p class="small">その他のモクテル（ノンアルコールカクテル）は、店主までご相談ください。</p>
+    <div class="row">
+      <button class="btn" type="button" id="sd-mock">ノンアルカクテルを診断する</button>
+      <button class="btn ghost" type="button" id="sd-home">最初に戻る</button>
+    </div>`;
+  card.querySelectorAll('[data-mood]').forEach(b => { b.onclick = () => renderSoft(b.dataset.mood); });
+  $('#sd-mock').onclick = () => startMode('pref');
+  $('#sd-home').onclick = () => { mode = null; answers = {}; idx = 0; render(); toTop(); };
+  toTop();
 }
 
 /* =========================================================
@@ -1040,7 +1223,7 @@ function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<':
 function visible() {
   if (mode === 'persona') return [...personaSet, PERSONA_STRENGTH];
   if (mode === 'whisky') return WH_STEPS;
-  return STEPS.filter(s => !(s.id === 'base' && answers.strength === 0));
+  return STEPS.filter(s => !(s.id === 'base' && answers.strength === 0) && !(s.id === 'flavor' && (answers.base === 'shochu' || answers.base === 'chuhai')));
 }
 const MODE_NAME = { pref: '好みから選ぶ', persona: '性格から選ぶ', whisky: 'ウイスキー診断' };
 
@@ -1064,8 +1247,11 @@ function renderStart() {
       <button class="choice mode" type="button" id="mode-persona" data-m="persona"><span class="num" aria-hidden="true">B</span><span>性格から選ぶ<small>休日の過ごし方や好きな季節など、お酒と関係ない質問からタイプを診断します。質問は毎回ランダムに入れ替わるので、みんなで何度でも遊べます。</small></span></button>
       <button class="choice mode" type="button" id="mode-whisky" data-m="whisky"><span class="num" aria-hidden="true">C</span><span>ウイスキーから選ぶ<small>ウイスキーが飲みたい方に。味の濃さ、甘さ、香り、飲み方などから、当店のウイスキーをご案内します。</small></span></button>
     </div>
-    <p class="small">質問は5〜8問、1分ほどで終わります。</p>`;
+    <p class="small">質問は5〜8問、1分ほどで終わります。</p>
+    <div class="row"><button class="btn ghost" type="button" id="wmenu-btn">ウイスキーメニュー（価格つき）を見る</button><button class="btn ghost" type="button" id="soft-btn">ソフトドリンクの方はこちら</button></div>`;
   card.querySelectorAll('.mode').forEach(b => b.addEventListener('click', () => { startMode(b.dataset.m); }));
+  $('#wmenu-btn').onclick = renderWhiskyMenu;
+  $('#soft-btn').onclick = () => renderSoft();
 }
 function startMode(m) { mode = m; answers = {}; idx = 0; if (m === 'persona') personaSet = pickPersonaSet(); render(); toTop(); }
 function render() {
@@ -1148,6 +1334,22 @@ function specialHtml(a) {
       </section>`).join('');
 }
 
+function houseHtml(a) {
+  const w = WHISKIES.find(x => x.n === HOUSE);
+  if (a.base === 'whisky') return `<section class="pick house">
+        <div class="art">${bottleSvg(w)}</div>
+        <div class="pick-body">
+          <div class="pick-head"><span class="rank">ウイスキーがお好きなあなたへ</span></div>
+          <h3 class="pname">${esc(w.n)}<span>${esc(w.en)}</span></h3>
+          <p class="fun">${esc(w.fun)}</p>
+          <p class="meta">一杯目のおすすめ：<b>ソーダ割り ${yen(w.price + MIXER_UP)}</b>（ストレート・ロック・水割りは ${yen(w.price)}）</p>
+          <p class="talk">${esc(w.talk)}</p>
+          <p class="small"><b>当店に来たら、まず來人ウイスキーを是非。</b></p>
+          <button class="btn ghost" type="button" id="to-whisky">ウイスキー診断をする</button>
+        </div>
+      </section>`;
+  return `<div class="notice raijin"><b>ウイスキーがお好きなら、まず來人ウイスキーを是非！</b><br>一杯目は、來人のソーダ割り（${yen(w.price + MIXER_UP)}）がおすすめです。<br><button class="btn ghost" type="button" id="to-whisky">ウイスキー診断をする</button></div>`;
+}
 function renderResult() {
   if (mode === 'whisky') return renderWhiskyResult();
   const persona = mode === 'persona';
@@ -1173,27 +1375,30 @@ function renderResult() {
         <div class="art">${glassSvg(c)}</div>
         <div class="pick-body">
           <div class="pick-head">
-            <span class="rank">${['いちばんのおすすめ', '2番目の候補', '3番目の候補'][i]}</span>
+            <span class="rank">${['メニューから：いちばんのおすすめ', 'メニューから：2番目の候補', 'メニューにない、とっておきの提案'][i]}</span>
             <span class="match">相性 ${r.pct}%</span>
           </div>
           <h3 class="pname">${esc(c.n)}<span>${esc(c.en)}</span></h3>
-          <p class="fun">${esc(FUN[c.n] || '')}</p>
+          <p class="fun">${esc(c.fun || FUN[c.n] || '')}</p>
           <div class="chips">${r.hits.map(h => `<span class="chip hit">${esc(h)}</span>`).join('')}</div>
           <p class="meta">${STR[c.str]}　／　${esc(c.how)}　／　${GLASS[c.glass]}</p>
+          <p class="meta">お値段：<b>${esc(c.priceText || '¥800')}</b></p>
+          ${c.menu ? '' : '<p class="small"><b>メニューにはない提案です。</b>作れるか、お値段は、バーテンダーにおたずねください。</p>'}
           <ul class="recipe">${c.r.map(([k, v]) => `<li><span>${esc(k)}</span><b>${esc(v)}</b></li>`).join('')}</ul>
           <p class="talk">${esc(c.talk)}</p>
         </div>
       </section>`;
     }).join('')}
     <p class="notice pay"><b>お支払い方法</b><span>現金のみ</span></p>
+    ${a.strength === 0 ? softBanner() : houseHtml(a)}
     ${specialHtml(a)}
-    <section class="notice nomi">
+    ${a.strength === 0 ? '' : `<section class="notice nomi">
       <p class="nomi-h">3杯以上飲むなら、飲み放題がお得です</p>
       <p class="nomi-p"><b>2時間 ¥2,750</b>（席料込み）〜</p>
       <p class="small">詳しくはドリンクメニューをご覧ください。</p>
-    </section>
+    </section>`}
     <p class="order">注文するときは、この画面をバーテンダーに見せてください。</p>
-    <p class="small">${persona ? '性格診断は会話を楽しむためのもので、科学的な根拠はありません。' : ''}相性は、条件とどれだけ合うかの目安です。</p>
+    <p class="small">${persona ? '性格診断は会話を楽しむためのもので、科学的な根拠はありません。' : ''}相性は、条件とどれだけ合うかの目安です。値段表記のないカクテルは全品¥800です。</p>
     <div class="row">
       <button class="btn" type="button" id="again">最初からやり直す</button>
       ${persona ? '<button class="btn ghost" type="button" id="redo">別の質問でもう一度</button>' : ''}
@@ -1202,6 +1407,8 @@ function renderResult() {
     </div>`;
   $('#again').onclick = () => { mode = null; answers = {}; idx = 0; render(); toTop(); };
   if (persona) $('#redo').onclick = () => startMode('persona');
+  if ($('#to-whisky')) $('#to-whisky').onclick = () => startMode('whisky');
+  if ($('#to-soft')) $('#to-soft').onclick = () => renderSoft();
   $('#other').onclick = () => { startMode(persona ? 'pref' : 'persona'); };
   $('#back').onclick = () => { idx--; render(); };
 }
