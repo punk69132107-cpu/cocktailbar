@@ -512,7 +512,8 @@ const COCKTAILS = [
   {"n": "ヴァージンモヒート", "en": "Virgin Mojito", "base": "none", "str": 0, "taste": ["fresh"], "flavor": ["herb", "citrus"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#e4f0cc", "r": [["ミントの葉", "たっぷり"], ["ライム", "1/2個"], ["シュガー・シロップ", "10ml"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ミントとライムをつぶして、ソーダで仕上げた、爽やかな一杯です。お酒は入っていません。", "fun": "お酒は入っていませんが、ミントの清涼感は本物です。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
   {"n": "ピーチモヒート", "en": "Peach Mojito", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["herb", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#f2d8bc", "r": [["ミントの葉", "たっぷり"], ["ピーチ（ノンアルコール）", "適量"], ["ライム", "1/2個"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ミントの爽やかさと桃の甘さが合わさった一杯です。お酒は入っていません。", "fun": "ミントと桃の、意外とよく合う組み合わせです。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
   {"n": "カシスモヒート", "en": "Cassis Mojito", "base": "none", "str": 0, "taste": ["sweet", "fresh"], "flavor": ["herb", "fruit"], "fizz": true, "scene": ["first", "meal"], "glass": "highball", "color": "#a86a94", "r": [["ミントの葉", "たっぷり"], ["カシス（ノンアルコール）", "適量"], ["ライム", "1/2個"], ["ソーダ", "適量"]], "how": "ビルド", "talk": "ミントの爽やかさとカシスの甘酸っぱさが合わさった一杯です。お酒は入っていません。", "fun": "赤紫の中にミントの緑が映える、写真映えする一杯です。", "menu": true, "priceText": "¥950", "deco": {"g": ["mint", "lime"]}},
-  {"n": "巨乳", "en": "Kyonyu (Original Chuhai)", "base": "chuhai", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal", "talk"], "glass": "highball", "color": "#e8a0b8", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["店主おまかせ", "適量"]], "how": "ビルド", "talk": "当店オリジナル酎ハイ。お客様との間で生まれた伝説的酎ハイです。", "fun": "名前だけで話題になる、当店の伝説の一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}}
+  {"n": "巨乳", "en": "Kyonyu (Original Chuhai)", "base": "chuhai", "str": 1, "taste": ["sweet", "fresh"], "flavor": ["fruit"], "fizz": true, "scene": ["first", "meal", "talk"], "glass": "highball", "color": "#e8a0b8", "r": [["焼酎", "45ml"], ["ソーダ", "適量"], ["店主おまかせ", "適量"]], "how": "ビルド", "talk": "当店オリジナル酎ハイ。お客様との間で生まれた伝説的酎ハイです。", "fun": "名前だけで話題になる、当店の伝説の一杯です。", "menu": true, "priceText": "¥750", "deco": {"g": ["lemon"]}},
+  {"n": "パントニック", "en": "Pantonic", "base": "gin", "str": 2, "taste": ["fresh", "bitter"], "flavor": ["citrus", "bitter"], "fizz": true, "scene": ["first", "meal", "talk"], "glass": "highball", "color": "#c8e4d0", "r": [["ボンベイサファイア", "45ml"], ["レモン", "1/8個"], ["トニックウォーター", "適量"]], "how": "ビルド", "talk": "普段のジントニックより少し度数の高い、飲みごたえのあるパントニックです。このカクテルの考案には大師匠である林氏、クリエイターキヨ氏にご協力頂きました。", "fun": "店主のおすすめ。ジントニックの一歩先を行く、ちょっと本気の一杯です。", "menu": true, "priceText": "¥850", "deco": {"g": ["lemon"]}}
 ];
 
 /* カクテルの scene（first/meal/after/last）を、気分タグに変換（味・強さ・炭酸などから自動で補う） */
@@ -756,7 +757,10 @@ function recommend(a) {
   // 1番目・2番目：当店のメニュー／3番目：メニューにない、おすすめの提案
   const sc = COCKTAILS.filter(c => a.strength === 0 ? c.str === 0 : c.str > 0).map(c => score(c, a)).sort((x, y) => y.s - x.s);
   const menu = sc.filter(r => r.c.menu), off = sc.filter(r => !r.c.menu);
-  return [...menu.slice(0, 2), ...off.slice(0, 1)];
+  const pt = sc.find(r => r.c.n === 'パントニック');
+  const hm = (a.taste === 'fresh') + (a.strength === 1) + (a.base === 'gin' || a.base === 'any') + (a.flavor === 'citrus') + (a.fizz === 'yes');
+  if (pt && hm >= 4) return [pt, ...menu.filter(r => r !== pt).slice(0, 1), ...off.slice(0, 1)];
+  return [...menu.filter(r => r !== pt).slice(0, 2), ...off.slice(0, 1)];
 }
 
 /* =========================================================
@@ -1375,7 +1379,7 @@ function renderResult() {
         <div class="art">${glassSvg(c)}</div>
         <div class="pick-body">
           <div class="pick-head">
-            <span class="rank">${['メニューから：いちばんのおすすめ', 'メニューから：2番目の候補', 'メニューにない、とっておきの提案'][i]}</span>
+            <span class="rank">${r.c.n === 'パントニック' ? '店主のおすすめ' : ['メニューから：いちばんのおすすめ', 'メニューから：2番目の候補', 'メニューにない、とっておきの提案'][i]}</span>
             <span class="match">相性 ${r.pct}%</span>
           </div>
           <h3 class="pname">${esc(c.n)}<span>${esc(c.en)}</span></h3>
